@@ -1,4 +1,4 @@
-namespace ReactAppC.Server
+namespace ReactAppC.Server.Data
 {
     public class WeatherForecast
     {
