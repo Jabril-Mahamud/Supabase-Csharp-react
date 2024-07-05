@@ -1,4 +1,3 @@
-// src/Navbar/Navbar.tsx
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -7,9 +6,9 @@ const Navbar: React.FC = () => {
     return (
         <AppBar position="fixed">
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left' }}>
                     <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
-                        MyReactApp
+                        Watch later App
                     </Link>
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2 }}>

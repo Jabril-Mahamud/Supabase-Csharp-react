@@ -12,8 +12,8 @@ using ReactAppC.Server.Data;
 namespace ReactAppC.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240703080907_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240705202100_IntialCreate")]
+    partial class IntialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,16 +34,22 @@ namespace ReactAppC.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("App")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sauce")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 

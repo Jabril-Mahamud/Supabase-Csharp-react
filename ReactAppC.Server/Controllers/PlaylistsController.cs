@@ -36,6 +36,10 @@ namespace ReactAppC.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Playlist>> CreatePlaylist([FromBody] Playlist playlist)
         {
+            // Set the date and time fields based on the current date and time
+            playlist.Date = DateTime.UtcNow.Date;
+            playlist.Time = DateTime.UtcNow.TimeOfDay;
+
             _context.Playlists.Add(playlist);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetPlaylist), new { id = playlist.Id }, playlist);

@@ -31,16 +31,22 @@ namespace ReactAppC.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("App")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sauce")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
