@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 
 interface Playlist {
     id: number;
@@ -96,46 +97,51 @@ const Playlist: React.FC = () => {
             .catch(error => console.error('Create error:', error));
     };
 
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'content', headerName: 'Content', width: 150 },
+        { field: 'sauce', headerName: 'Sauce', width: 150 },
+        { field: 'app', headerName: 'App', width: 150 },
+        {
+            field: 'dateTime',
+            headerName: 'DateTime',
+            width: 200,
+            valueFormatter: (params) => {
+                const date = new Date(params.value as string);
+                return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
+            },
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 150,
+            renderCell: (params) => (
+                <IconButton
+                    color="secondary"
+                    onClick={() => handleDelete(params.id as number)}
+                >
+                    <DeleteIcon />
+                </IconButton>
+            ),
+        },
+    ];
+
+    const rows: GridRowsProp = playlists.map((playlist) => ({
+        id: playlist.id,
+        content: playlist.content,
+        sauce: playlist.sauce,
+        app: playlist.app,
+        dateTime: playlist.dateTime,
+    }));
+
     const options = ['Create'];
 
     return (
         <div>
             <h1>Playlists</h1>
-            {playlists.length === 0 ? (
-                <p>Loading...</p>
-            ) : (
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Content</th>
-                            <th>Sauce</th>
-                            <th>App</th>
-                            <th>DateTime</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {playlists.map(playlist => (
-                            <tr key={playlist.id}>
-                                <td>{playlist.id}</td>
-                                <td>{playlist.content}</td>
-                                <td>{playlist.sauce}</td>
-                                <td>{playlist.app}</td>
-                                <td>{new Date(playlist.dateTime).toLocaleString()}</td>
-                                <td>
-                                    <IconButton
-                                        color="secondary"
-                                        onClick={() => handleDelete(playlist.id)}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+            <div style={{ height: 400, width: '100%' }}>
+                <DataGrid rows={rows} columns={columns} pageSize={5} rowsPerPageOptions={[5]} />
+            </div>
             <ButtonGroup variant="contained" aria-label="split button">
                 <Button onClick={handleCreate}>Create</Button>
                 <Button
