@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReactAppC.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class IntialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +17,11 @@ namespace ReactAppC.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Sauce = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    App = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sauce = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    App = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {

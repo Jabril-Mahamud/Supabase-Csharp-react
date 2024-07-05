@@ -21,12 +21,12 @@ interface Playlist {
     content: string;
     sauce: string;
     app: string;
-    dateTime: string;
+    date: string;
+    time: string;
 }
 
 const Playlist: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
 
@@ -47,14 +47,6 @@ const Playlist: React.FC = () => {
         }
     };
 
-    const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
     const handleDialogClose = () => {
         setDialogOpen(false);
         setFormData({});
@@ -65,36 +57,36 @@ const Playlist: React.FC = () => {
         setDialogOpen(true);
     };
 
-    const handleDelete = (id: number) => {
-        fetch(`https://localhost:7294/api/Playlist/${id}`, {
-            method: 'DELETE',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Delete failed');
-                }
-                fetchPlaylists();
-            })
-            .catch(error => console.error('Delete error:', error));
+    const handleDelete = async (id: number) => {
+        try {
+            const response = await fetch(`https://localhost:7294/api/Playlist/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Delete failed');
+            }
+            fetchPlaylists();
+        } catch (error) {
+            console.error('Delete error:', error);
+        }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const currentDateTime = new Date().toISOString();
-
-        fetch('https://localhost:7294/api/Playlist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...formData, dateTime: currentDateTime }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Create failed');
-                }
-                fetchPlaylists();
-                handleDialogClose();
-            })
-            .catch(error => console.error('Create error:', error));
+        try {
+            const response = await fetch('https://localhost:7294/api/Playlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) {
+                throw new Error('Create failed');
+            }
+            fetchPlaylists();
+            handleDialogClose();
+        } catch (error) {
+            console.error('Create error:', error);
+        }
     };
 
     const columns: GridColDef[] = [
@@ -102,24 +94,14 @@ const Playlist: React.FC = () => {
         { field: 'content', headerName: 'Content', width: 150 },
         { field: 'sauce', headerName: 'Sauce', width: 150 },
         { field: 'app', headerName: 'App', width: 150 },
-        {
-            field: 'dateTime',
-            headerName: 'DateTime',
-            width: 200,
-            valueFormatter: (params) => {
-                const date = new Date(params.value as string);
-                return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
-            },
-        },
+        { field: 'date', headerName: 'Date', width: 150 },
+        { field: 'time', headerName: 'Time', width: 150 },
         {
             field: 'actions',
             headerName: 'Actions',
             width: 150,
             renderCell: (params) => (
-                <IconButton
-                    color="secondary"
-                    onClick={() => handleDelete(params.id as number)}
-                >
+                <IconButton onClick={() => handleDelete(params.row.id)} color="secondary">
                     <DeleteIcon />
                 </IconButton>
             ),
@@ -131,46 +113,19 @@ const Playlist: React.FC = () => {
         content: playlist.content,
         sauce: playlist.sauce,
         app: playlist.app,
-        dateTime: playlist.dateTime,
+        date: new Date(playlist.date).toLocaleDateString(),
+        time: new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-US', { hour12: false }),
     }));
 
-    const options = ['Create'];
-
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <h1>Playlists</h1>
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} rowsPerPageOptions={[5]} />
+            <div style={{ flexGrow: 1, width: '100%' }}>
+                <DataGrid rows={rows} columns={columns} pageSize={5} autoHeight />
             </div>
             <ButtonGroup variant="contained" aria-label="split button">
                 <Button onClick={handleCreate}>Create</Button>
-                <Button
-                    size="small"
-                    aria-controls={anchorEl ? 'split-button-menu' : undefined}
-                    aria-expanded={anchorEl ? 'true' : undefined}
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    onClick={handleToggle}
-                >
-                    <ArrowDropDownIcon />
-                </Button>
             </ButtonGroup>
-            <Menu
-                id="split-button-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                {options.map((option, index) => (
-                    <MenuItem
-                        key={option}
-                        selected={index === 0}
-                        onClick={handleCreate}
-                    >
-                        {option}
-                    </MenuItem>
-                ))}
-            </Menu>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
