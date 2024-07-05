@@ -9,6 +9,7 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Navbar from './Navbar/Navbar';
 import './index.css';
+import Views from './pages/Views';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/home" element={<Home />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />
+                    <Route path="/views" element={<Views /> }/>
                 </Routes>
             </div>
         </Router>

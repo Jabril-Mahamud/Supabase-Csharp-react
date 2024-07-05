@@ -1,7 +1,7 @@
-function view() {
+function Views() {
   return (
     <p>Hello world!</p>
   );
 }
 
-export default view;
+export default Views;

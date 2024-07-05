@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
     Button,
-    ButtonGroup,
-    Menu,
-    MenuItem,
     Dialog,
     DialogActions,
     DialogContent,
@@ -12,8 +9,8 @@ import {
     TextField,
     IconButton,
 } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 
 interface Playlist {
@@ -121,11 +118,16 @@ const Playlist: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <h1>Playlists</h1>
             <div style={{ flexGrow: 1, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} autoHeight />
+                <DataGrid rows={rows} columns={columns} pageSize={10} autoHeight />
             </div>
-            <ButtonGroup variant="contained" aria-label="split button">
-                <Button onClick={handleCreate}>Create</Button>
-            </ButtonGroup>
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={handleCreate}
+            >
+                Create Playlist
+            </Button>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
