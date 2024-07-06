@@ -1,20 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField,
-    IconButton,
-    Card,
-    CardContent,
-    Typography,
-    Grid,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
 
 interface Playlist {
@@ -91,43 +77,41 @@ const Views: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h1 className="text-3xl font-bold underline">Views</h1>
-            <Grid container spacing={3} justifyContent="center">
+        <div>
+            <h1 className="text-3xl font-bold underline mb-5">Views</h1>
+            <div>
                 {playlists.map((playlist) => (
-                    <Grid item xs={12} key={playlist.id}>
-                        <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-                                <ReactPlayer
-                                    url={playlist.sauce}
-                                    width="100%"
-                                    height="100%"
-                                    controls
-                                    style={{ position: 'absolute', top: 0, left: 0 }}
-                                />
-                            </div>
-                            <CardContent style={{ flexGrow: 1 }}>
-                                <Typography variant="h4">{playlist.content}</Typography>
-                                <Typography variant="h6">{playlist.app}</Typography>
-                                <Typography variant="body1">{new Date(playlist.date).toLocaleDateString()}</Typography>
-                                <Typography variant="body1">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
-                                <IconButton onClick={() => handleDelete(playlist.id)} color="secondary">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                    <div key={playlist.id}>
+                        <div>
+                            <ReactPlayer
+                                url={playlist.sauce}
+                                width="100%"
+                                height="100%"
+                                controls
+                            />
+                        </div>
+                        <div>
+                            <h2>{playlist.content}</h2>
+                            <p>{playlist.app}</p>
+                            <p>{new Date(playlist.date).toLocaleDateString()}</p>
+                            <p>{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</p>
+                        </div>
+                        <div>
+                            <button
+                                onClick={() => handleDelete(playlist.id)}
+                            >
+                                <DeleteIcon />
+                            </button>
+                        </div>
+                    </div>
                 ))}
-            </Grid>
-            <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
+            </div>
+            <button
                 onClick={handleCreate}
-                style={{ marginTop: '20px' }}
             >
+                <AddIcon />
                 Create Playlist
-            </Button>
+            </button>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -163,8 +147,12 @@ const Views: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleDialogClose}>Cancel</Button>
-                        <Button type="submit">Create</Button>
+                        <button onClick={handleDialogClose}>
+                            Cancel
+                        </button>
+                        <button type="submit">
+                            Create
+                        </button>
                     </DialogActions>
                 </form>
             </Dialog>
