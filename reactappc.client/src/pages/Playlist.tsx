@@ -117,8 +117,8 @@ const Playlist: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <h1>Playlists</h1>
-            <div style={{ flexGrow: 1, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} pageSize={10} autoHeight />
+            <div style={{ flexGrow: 1, width: 'auto' }}>
+                <DataGrid rows={rows} columns={columns} pageSize={8} autoHeight />
             </div>
             <Button
                 variant="contained"

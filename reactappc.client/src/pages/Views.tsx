@@ -110,7 +110,7 @@ const Views: React.FC = () => {
                                 <Typography variant="h6">{playlist.content}</Typography>
                                 <Typography variant="body2">{playlist.app}</Typography>
                                 <Typography variant="body2">{new Date(playlist.date).toLocaleDateString()}</Typography>
-                                <Typography variant="body2">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-US', { hour12: false })}</Typography>
+                                <Typography variant="body2">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
                                 <IconButton onClick={() => handleDelete(playlist.id)} color="secondary">
                                     <DeleteIcon />
                                 </IconButton>
