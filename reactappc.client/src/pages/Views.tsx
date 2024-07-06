@@ -92,8 +92,8 @@ const Views: React.FC = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h1>Views</h1>
-            <Grid container spacing={3}>
+            <h1 className="text-3xl font-bold underline">Views</h1>
+            <Grid container spacing={3} justifyContent="center">
                 {playlists.map((playlist) => (
                     <Grid item xs={12} key={playlist.id}>
                         <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -106,11 +106,11 @@ const Views: React.FC = () => {
                                     style={{ position: 'absolute', top: 0, left: 0 }}
                                 />
                             </div>
-                            <CardContent style={{ flexGrow: 0 }}>
-                                <Typography variant="h6">{playlist.content}</Typography>
-                                <Typography variant="body2">{playlist.app}</Typography>
-                                <Typography variant="body2">{new Date(playlist.date).toLocaleDateString()}</Typography>
-                                <Typography variant="body2">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
+                            <CardContent style={{ flexGrow: 1 }}>
+                                <Typography variant="h4">{playlist.content}</Typography>
+                                <Typography variant="h6">{playlist.app}</Typography>
+                                <Typography variant="body1">{new Date(playlist.date).toLocaleDateString()}</Typography>
+                                <Typography variant="body1">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
                                 <IconButton onClick={() => handleDelete(playlist.id)} color="secondary">
                                     <DeleteIcon />
                                 </IconButton>

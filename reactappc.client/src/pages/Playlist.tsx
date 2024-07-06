@@ -8,10 +8,14 @@ import {
     DialogTitle,
     TextField,
     IconButton,
+    Card,
+    CardContent,
+    Typography,
+    Grid,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import ReactPlayer from 'react-player';
 
 interface Playlist {
     id: number;
@@ -22,7 +26,7 @@ interface Playlist {
     time: string;
 }
 
-const Playlist: React.FC = () => {
+const Views: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
@@ -86,45 +90,41 @@ const Playlist: React.FC = () => {
         }
     };
 
-    const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'content', headerName: 'Content', width: 150 },
-        { field: 'sauce', headerName: 'Sauce', width: 150 },
-        { field: 'app', headerName: 'App', width: 150 },
-        { field: 'date', headerName: 'Date', width: 150 },
-        { field: 'time', headerName: 'Time', width: 150 },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 150,
-            renderCell: (params) => (
-                <IconButton onClick={() => handleDelete(params.row.id)} color="secondary">
-                    <DeleteIcon />
-                </IconButton>
-            ),
-        },
-    ];
-
-    const rows: GridRowsProp = playlists.map((playlist) => ({
-        id: playlist.id,
-        content: playlist.content,
-        sauce: playlist.sauce,
-        app: playlist.app,
-        date: new Date(playlist.date).toLocaleDateString(),
-        time: new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-US', { hour12: false }),
-    }));
-
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <h1>Playlists</h1>
-            <div style={{ flexGrow: 1, width: 'auto' }}>
-                <DataGrid rows={rows} columns={columns} pageSize={8} autoHeight />
-            </div>
+        <div style={{ padding: '20px' }}>
+            <h1>Views</h1>
+            <Grid container spacing={3}>
+                {playlists.map((playlist) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={playlist.id}>
+                        <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+                                <ReactPlayer
+                                    url={playlist.sauce}
+                                    width="100%"
+                                    height="100%"
+                                    controls
+                                    style={{ position: 'absolute', top: 0, left: 0 }}
+                                />
+                            </div>
+                            <CardContent style={{ flexGrow: 1 }}>
+                                <Typography variant="h6">{playlist.content}</Typography>
+                                <Typography variant="body2">{playlist.app}</Typography>
+                                <Typography variant="body2">{new Date(playlist.date).toLocaleDateString()}</Typography>
+                                <Typography variant="body2">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
+                                <IconButton onClick={() => handleDelete(playlist.id)} color="secondary">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
             <Button
                 variant="contained"
                 color="primary"
                 startIcon={<AddIcon />}
                 onClick={handleCreate}
+                style={{ marginTop: '20px' }}
             >
                 Create Playlist
             </Button>
@@ -139,7 +139,7 @@ const Playlist: React.FC = () => {
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Content"
+                            label="Content (YouTube URL)"
                             type="text"
                             fullWidth
                             value={formData.content || ''}
@@ -172,4 +172,4 @@ const Playlist: React.FC = () => {
     );
 };
 
-export default Playlist;
+export default Views;

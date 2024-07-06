@@ -1,4 +1,3 @@
-// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -15,14 +14,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Router>
             <Navbar />
-            <div style={{ marginTop: '64px' }}>
+            <div className="mt-16">
                 <Routes>
                     <Route path="/" element={<App />} />
                     <Route path="/playlist" element={<Playlist />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />
-                    <Route path="/views" element={<Views /> }/>
+                    <Route path="/views" element={<Views />} />
                 </Routes>
             </div>
         </Router>
