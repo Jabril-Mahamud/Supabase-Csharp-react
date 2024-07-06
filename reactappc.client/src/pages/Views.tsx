@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
+import '../css/Views.css'; // Import custom CSS for styling
 
 interface Playlist {
     id: number;
@@ -77,41 +78,41 @@ const Views: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold underline mb-5">Views</h1>
-            <div>
+        <div className="views-container">
+            <h1 className="views-title">Video Feed</h1>
+            <div className="video-feed">
                 {playlists.map((playlist) => (
-                    <div key={playlist.id}>
-                        <div>
-                            <ReactPlayer
-                                url={playlist.sauce}
-                                width="100%"
-                                height="100%"
-                                controls
-                            />
+                    <div key={playlist.id} className="video-card">
+                        <ReactPlayer
+                            url={playlist.sauce}
+                            width="100%"
+                            height="100%"
+                            controls
+                        />
+                        <div className="video-info">
+                            <h2 className="video-content">{playlist.content}</h2>
+                            <p className="video-app">{playlist.app}</p>
+                            <p className="video-date">{new Date(playlist.date).toLocaleDateString()}</p>
+                            <p className="video-time">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</p>
                         </div>
-                        <div>
-                            <h2>{playlist.content}</h2>
-                            <p>{playlist.app}</p>
-                            <p>{new Date(playlist.date).toLocaleDateString()}</p>
-                            <p>{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</p>
-                        </div>
-                        <div>
-                            <button
-                                onClick={() => handleDelete(playlist.id)}
-                            >
+                        <div className="delete-button-container">
+                            <IconButton onClick={() => handleDelete(playlist.id)} color="error">
                                 <DeleteIcon />
-                            </button>
+                            </IconButton>
                         </div>
                     </div>
                 ))}
             </div>
-            <button
-                onClick={handleCreate}
-            >
-                <AddIcon />
-                Create Playlist
-            </button>
+            <div className="create-button-container">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={handleCreate}
+                >
+                    Add Playlist
+                </Button>
+            </div>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -147,12 +148,12 @@ const Views: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <button onClick={handleDialogClose}>
+                        <Button onClick={handleDialogClose} color="secondary">
                             Cancel
-                        </button>
-                        <button type="submit">
+                        </Button>
+                        <Button type="submit" variant="contained" color="primary">
                             Create
-                        </button>
+                        </Button>
                     </DialogActions>
                 </form>
             </Dialog>
@@ -161,3 +162,4 @@ const Views: React.FC = () => {
 };
 
 export default Views;
+
