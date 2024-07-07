@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton } from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar } from '@mui/material';
+import { Delete as DeleteIcon, Add as AddIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
-import '../css/Views.css'; // Import custom CSS for styling
 
 interface Playlist {
     id: number;
@@ -78,32 +77,51 @@ const Views: React.FC = () => {
     };
 
     return (
-        <div className="views-container">
-            <h1 className="views-title">Video Feed</h1>
-            <div className="video-feed">
+        <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
+            <Typography variant="h4" component="h1" gutterBottom>
+                Video Feed
+            </Typography>
+            <Stack spacing={2}>
                 {playlists.map((playlist) => (
-                    <div key={playlist.id} className="video-card">
-                        <ReactPlayer
-                            url={playlist.sauce}
-                            width="100%"
-                            height="100%"
-                            controls
-                        />
-                        <div className="video-info">
-                            <h2 className="video-content">{playlist.content}</h2>
-                            <p className="video-app">{playlist.app}</p>
-                            <p className="video-date">{new Date(playlist.date).toLocaleDateString()}</p>
-                            <p className="video-time">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</p>
-                        </div>
-                        <div className="delete-button-container">
-                            <IconButton onClick={() => handleDelete(playlist.id)} color="error">
-                                <DeleteIcon />
-                            </IconButton>
-                        </div>
-                    </div>
+                    <Card key={playlist.id} sx={{ boxShadow: 1 }}>
+                        <CardContent sx={{ paddingBottom: 0 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+                                <Avatar sx={{ marginRight: 2 }}>
+                                    {playlist.app[0].toUpperCase()}
+                                </Avatar>
+                                <Typography variant="subtitle1" component="span" sx={{ flexGrow: 1 }}>
+                                    {playlist.app}
+                                </Typography>
+                                <IconButton size="small">
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </Box>
+                        </CardContent>
+                        <CardMedia>
+                            <ReactPlayer
+                                url={playlist.sauce}
+                                width="100%"
+                                height="300px"
+                                controls
+                            />
+                        </CardMedia>
+                        <CardContent>
+                            <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                                {playlist.content}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" component="p">
+                                {new Date(playlist.date).toLocaleDateString()} at {new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
+                                <IconButton size="small" onClick={() => handleDelete(playlist.id)} color="error">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        </CardContent>
+                    </Card>
                 ))}
-            </div>
-            <div className="create-button-container">
+            </Stack>
+            <Box sx={{ marginTop: 2 }}>
                 <Button
                     variant="contained"
                     color="primary"
@@ -112,7 +130,7 @@ const Views: React.FC = () => {
                 >
                     Add Playlist
                 </Button>
-            </div>
+            </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -157,9 +175,8 @@ const Views: React.FC = () => {
                     </DialogActions>
                 </form>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 
 export default Views;
-
