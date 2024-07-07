@@ -72,6 +72,8 @@ const Views: React.FC = () => {
             return 'Dailymotion';
         } else if (url.includes('twitch.tv')) {
             return 'Twitch';
+        } else if (url.includes('instagram.com')) {
+            return 'Instagram';
         } else {
             return 'Unknown';
         }
