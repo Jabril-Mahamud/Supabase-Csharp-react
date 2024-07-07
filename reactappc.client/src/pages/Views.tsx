@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
 
@@ -16,10 +16,15 @@ const Views: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
+    const [sortOption, setSortOption] = useState<string>('dateDesc');
 
     useEffect(() => {
         fetchPlaylists();
     }, []);
+
+    useEffect(() => {
+        setPlaylists(prev => sortPlaylists([...prev], sortOption));
+    }, [sortOption]);
 
     const fetchPlaylists = async () => {
         try {
@@ -28,7 +33,7 @@ const Views: React.FC = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            setPlaylists(data);
+            setPlaylists(sortPlaylists(data, sortOption));
         } catch (error) {
             console.error('Fetching error:', error);
         }
@@ -52,28 +57,69 @@ const Views: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Delete failed');
             }
-            fetchPlaylists();
+            await fetchPlaylists();
         } catch (error) {
             console.error('Delete error:', error);
+        }
+    };
+
+    const getAppFromUrl = (url: string): string => {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            return 'YouTube';
+        } else if (url.includes('vimeo.com')) {
+            return 'Vimeo';
+        } else if (url.includes('dailymotion.com')) {
+            return 'Dailymotion';
+        } else if (url.includes('twitch.tv')) {
+            return 'Twitch';
+        } else {
+            return 'Unknown';
         }
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
+            const app = getAppFromUrl(formData.sauce || '');
+            const now = new Date();
+            const newPlaylist = {
+                ...formData,
+                app: app,
+                date: formData.date || now.toISOString().split('T')[0],
+                time: formData.time || now.toTimeString().split(' ')[0].slice(0, 5), // HH:mm format
+            };
             const response = await fetch('https://localhost:7294/api/Playlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(newPlaylist),
             });
             if (!response.ok) {
                 throw new Error('Create failed');
             }
-            fetchPlaylists();
+            await fetchPlaylists();
             handleDialogClose();
         } catch (error) {
             console.error('Create error:', error);
         }
+    };
+
+    const sortPlaylists = (playlists: Playlist[], option: string): Playlist[] => {
+        return [...playlists].sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.time}`);
+            const dateB = new Date(`${b.date}T${b.time}`);
+            switch (option) {
+                case 'dateAsc':
+                    return dateA.getTime() - dateB.getTime();
+                case 'dateDesc':
+                    return dateB.getTime() - dateA.getTime();
+                case 'appAsc':
+                    return a.app.localeCompare(b.app);
+                case 'appDesc':
+                    return b.app.localeCompare(a.app);
+                default:
+                    return 0;
+            }
+        });
     };
 
     return (
@@ -81,6 +127,30 @@ const Views: React.FC = () => {
             <Typography variant="h4" component="h1" gutterBottom>
                 Video Feed
             </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                    <InputLabel id="sort-select-label">Sort by</InputLabel>
+                    <Select
+                        labelId="sort-select-label"
+                        value={sortOption}
+                        label="Sort by"
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <MenuItem value="dateDesc">Newest First</MenuItem>
+                        <MenuItem value="dateAsc">Oldest First</MenuItem>
+                        <MenuItem value="appAsc">App (A-Z)</MenuItem>
+                        <MenuItem value="appDesc">App (Z-A)</MenuItem>
+                    </Select>
+                </FormControl>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={handleCreate}
+                >
+                    Add Playlist
+                </Button>
+            </Box>
             <Stack spacing={2}>
                 {playlists.map((playlist) => (
                     <Card key={playlist.id} sx={{ boxShadow: 1 }}>
@@ -121,16 +191,6 @@ const Views: React.FC = () => {
                     </Card>
                 ))}
             </Stack>
-            <Box sx={{ marginTop: 2 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={handleCreate}
-                >
-                    Add Playlist
-                </Button>
-            </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -150,7 +210,7 @@ const Views: React.FC = () => {
                         />
                         <TextField
                             margin="dense"
-                            label="Sauce"
+                            label="Sauce (Video URL)"
                             type="text"
                             fullWidth
                             value={formData.sauce || ''}
@@ -158,11 +218,21 @@ const Views: React.FC = () => {
                         />
                         <TextField
                             margin="dense"
-                            label="App"
-                            type="text"
+                            label="Date"
+                            type="date"
                             fullWidth
-                            value={formData.app || ''}
-                            onChange={(e) => setFormData({ ...formData, app: e.target.value })}
+                            value={formData.date || ''}
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <TextField
+                            margin="dense"
+                            label="Time"
+                            type="time"
+                            fullWidth
+                            value={formData.time || ''}
+                            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                            InputLabelProps={{ shrink: true }}
                         />
                     </DialogContent>
                     <DialogActions>
