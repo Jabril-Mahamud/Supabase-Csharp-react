@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import Navbar from './Navbar/Navbar';
-import './index.css';
 import Views from './pages/Views';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

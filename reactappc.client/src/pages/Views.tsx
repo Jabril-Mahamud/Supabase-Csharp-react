@@ -1,20 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField,
-    IconButton,
-    Card,
-    CardContent,
-    Typography,
-    Grid,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar } from '@mui/material';
+import { Delete as DeleteIcon, Add as AddIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
 
 interface Playlist {
@@ -91,43 +77,60 @@ const Views: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h1 className="text-3xl font-bold underline">Views</h1>
-            <Grid container spacing={3} justifyContent="center">
+        <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
+            <Typography variant="h4" component="h1" gutterBottom>
+                Video Feed
+            </Typography>
+            <Stack spacing={2}>
                 {playlists.map((playlist) => (
-                    <Grid item xs={12} key={playlist.id}>
-                        <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-                                <ReactPlayer
-                                    url={playlist.sauce}
-                                    width="100%"
-                                    height="100%"
-                                    controls
-                                    style={{ position: 'absolute', top: 0, left: 0 }}
-                                />
-                            </div>
-                            <CardContent style={{ flexGrow: 1 }}>
-                                <Typography variant="h4">{playlist.content}</Typography>
-                                <Typography variant="h6">{playlist.app}</Typography>
-                                <Typography variant="body1">{new Date(playlist.date).toLocaleDateString()}</Typography>
-                                <Typography variant="body1">{new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}</Typography>
-                                <IconButton onClick={() => handleDelete(playlist.id)} color="secondary">
+                    <Card key={playlist.id} sx={{ boxShadow: 1 }}>
+                        <CardContent sx={{ paddingBottom: 0 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+                                <Avatar sx={{ marginRight: 2 }}>
+                                    {playlist.app[0].toUpperCase()}
+                                </Avatar>
+                                <Typography variant="subtitle1" component="span" sx={{ flexGrow: 1 }}>
+                                    {playlist.app}
+                                </Typography>
+                                <IconButton size="small">
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </Box>
+                        </CardContent>
+                        <CardMedia>
+                            <ReactPlayer
+                                url={playlist.sauce}
+                                width="100%"
+                                height="300px"
+                                controls
+                            />
+                        </CardMedia>
+                        <CardContent>
+                            <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                                {playlist.content}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" component="p">
+                                {new Date(playlist.date).toLocaleDateString()} at {new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
+                                <IconButton size="small" onClick={() => handleDelete(playlist.id)} color="error">
                                     <DeleteIcon />
                                 </IconButton>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                            </Box>
+                        </CardContent>
+                    </Card>
                 ))}
-            </Grid>
-            <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={handleCreate}
-                style={{ marginTop: '20px' }}
-            >
-                Create Playlist
-            </Button>
+            </Stack>
+            <Box sx={{ marginTop: 2 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={handleCreate}
+                >
+                    Add Playlist
+                </Button>
+            </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -163,12 +166,16 @@ const Views: React.FC = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleDialogClose}>Cancel</Button>
-                        <Button type="submit">Create</Button>
+                        <Button onClick={handleDialogClose} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" color="primary">
+                            Create
+                        </Button>
                     </DialogActions>
                 </form>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 
