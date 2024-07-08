@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using ReactAppC.Server.Data;
 using ReactAppC.Server.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ReactAppC.Server.Controllers
 {
@@ -19,7 +22,16 @@ namespace ReactAppC.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Playlist>>> GetPlaylists()
         {
-            return Ok(await _context.Playlists.ToListAsync());
+            var playlists = await _context.Playlists.ToListAsync();
+            return Ok(playlists.Select(p => new
+            {
+                p.Id,
+                p.Content,
+                p.Sauce,
+                p.App,
+                Date = p.Date.ToString("yyyy-MM-dd"),
+                Time = p.Time.ToString(@"hh\:mm\:ss")
+            }));
         }
 
         [HttpGet("{id}")]
@@ -30,19 +42,36 @@ namespace ReactAppC.Server.Controllers
             {
                 return NotFound();
             }
-            return Ok(playlist);
+            return Ok(new
+            {
+                playlist.Id,
+                playlist.Content,
+                playlist.Sauce,
+                playlist.App,
+                Date = playlist.Date.ToString("yyyy-MM-dd"),
+                Time = playlist.Time.ToString(@"hh\:mm\:ss")
+            });
         }
 
         [HttpPost]
         public async Task<ActionResult<Playlist>> CreatePlaylist([FromBody] Playlist playlist)
         {
-            // Set the date and time fields based on the current date and time
-            playlist.Date = DateTime.UtcNow.Date;
-            playlist.Time = DateTime.UtcNow.TimeOfDay;
+            var now = DateTime.UtcNow;
+            playlist.Date = now.Date;
+            playlist.Time = now.TimeOfDay;
 
             _context.Playlists.Add(playlist);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetPlaylist), new { id = playlist.Id }, playlist);
+
+            return CreatedAtAction(nameof(GetPlaylist), new { id = playlist.Id }, new
+            {
+                playlist.Id,
+                playlist.Content,
+                playlist.Sauce,
+                playlist.App,
+                Date = playlist.Date.ToString("yyyy-MM-dd"),
+                Time = playlist.Time.ToString(@"hh\:mm\:ss")
+            });
         }
 
         [HttpPut("{id}")]
@@ -53,9 +82,18 @@ namespace ReactAppC.Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(updatedPlaylist).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var existingPlaylist = await _context.Playlists.FindAsync(id);
+            if (existingPlaylist == null)
+            {
+                return NotFound();
+            }
 
+            existingPlaylist.Content = updatedPlaylist.Content;
+            existingPlaylist.Sauce = updatedPlaylist.Sauce;
+            existingPlaylist.App = updatedPlaylist.App;
+            // Don't update Date and Time
+
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
@@ -70,7 +108,6 @@ namespace ReactAppC.Server.Controllers
 
             _context.Playlists.Remove(playlist);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }

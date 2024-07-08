@@ -8,8 +8,8 @@ interface Playlist {
     content: string;
     sauce: string;
     app: string;
-    date: string; // format: "2024-07-05 00:00:00.0000000"
-    time: string; // format: "22:01:07.9265252"
+    date: string;
+    time: string;
 }
 
 const Views: React.FC = () => {
@@ -83,12 +83,10 @@ const Views: React.FC = () => {
         event.preventDefault();
         try {
             const app = getAppFromUrl(formData.sauce || '');
-            const now = new Date();
             const newPlaylist = {
                 ...formData,
                 app: app,
-                date: formData.date || now.toISOString().split('T')[0],
-                time: formData.time || now.toTimeString().split(' ')[0].slice(0, 5), // HH:mm format
+                // Remove date and time from here, they'll be set by the server
             };
             const response = await fetch('https://localhost:7294/api/Playlist', {
                 method: 'POST',
@@ -182,7 +180,7 @@ const Views: React.FC = () => {
                                 {playlist.content}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" component="p">
-                                {new Date(playlist.date).toLocaleDateString()} at {new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}
+                                {playlist.date} at {playlist.time}
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
                                 <IconButton size="small" onClick={() => handleDelete(playlist.id)} color="error">
