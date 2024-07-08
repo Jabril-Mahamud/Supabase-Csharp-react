@@ -86,7 +86,6 @@ const Views: React.FC = () => {
             const newPlaylist = {
                 ...formData,
                 app: app,
-                // Remove date and time from here, they'll be set by the server
             };
             const response = await fetch('https://localhost:7294/api/Playlist', {
                 method: 'POST',
@@ -202,7 +201,7 @@ const Views: React.FC = () => {
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Content (YouTube URL)"
+                            label="Content"
                             type="text"
                             fullWidth
                             value={formData.content || ''}
