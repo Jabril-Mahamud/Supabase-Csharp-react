@@ -87,12 +87,12 @@ const Playlist: React.FC = () => {
     };
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID'},
-        { field: 'content', headerName: 'Content'},
-        { field: 'sauce', headerName: 'Sauce'},
-        { field: 'app', headerName: 'App'},
-        { field: 'date', headerName: 'Date'},
-        { field: 'time', headerName: 'Time'},
+        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'content', headerName: 'Content', width: 150 },
+        { field: 'sauce', headerName: 'Sauce', flex: 1 },
+        { field: 'app', headerName: 'App', width: 150 },
+        { field: 'date', headerName: 'Date', width: 150 },
+        { field: 'time', headerName: 'Time', width: 150 },
         {
             field: 'actions',
             headerName: 'Actions',
@@ -153,14 +153,7 @@ const Playlist: React.FC = () => {
                             value={formData.sauce || ''}
                             onChange={(e) => setFormData({ ...formData, sauce: e.target.value })}
                         />
-                        <TextField
-                            margin="dense"
-                            label="App"
-                            type="text"
-                            fullWidth
-                            value={formData.app || ''}
-                            onChange={(e) => setFormData({ ...formData, app: e.target.value })}
-                        />
+
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleDialogClose}>Cancel</Button>
