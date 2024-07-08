@@ -16,54 +16,47 @@ Features
         Controllers for handling Playlists and WeatherForecast.
         Swagger/OpenAPI for API documentation.
 
-Getting Started
-Prerequisites
+##Getting Started
+###Prerequisites
 
     Node.js
     .NET SDK
 
-Installation
+##Installation
 
-    Clone the repository:
-
-    sh
+###Clone the repository:
 
     git clone https://github.com/Jabril-Mahamud/ReactAppC.git
 
     cd ReactAppC
 
-Install client dependencies:
+###Install client dependencies:
 
-    sh
+   
     cd reactappc.client
     npm install
 
-Install server dependencies:
-
-    sh
+###Install server dependencies:
 
     cd ../ReactAppC.Server
     dotnet restore
 
-Running the Application
+##Running the Application
 
-    Start the server:
-
-    sh
+###Start the server:
 
     cd ReactAppC.Server
     dotnet run
   
-Start the client:
+###Start the client:
 
-    sh
-
+   
     cd ../reactappc.client
     npm run dev
 
     Open your browser and navigate to https://localhost:7294 for the server and https://localhost:5173 for the client.
 
-Project Structure
+#Project Structure
 
     ReactAppC
     ├── ReactAppC.Server
