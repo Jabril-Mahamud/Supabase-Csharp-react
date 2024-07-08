@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        sx={{ mr: 2 }}
+                        sx={{ mr: 2, display: { md: 'none' } }}
                         onClick={toggleDrawer(true)}
                     >
                         <MenuIcon />
@@ -84,3 +84,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
