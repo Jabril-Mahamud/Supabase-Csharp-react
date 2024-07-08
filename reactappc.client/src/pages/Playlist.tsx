@@ -87,12 +87,12 @@ const Playlist: React.FC = () => {
     };
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'content', headerName: 'Content', width: 150 },
-        { field: 'sauce', headerName: 'Sauce', width: 150 },
-        { field: 'app', headerName: 'App', width: 150 },
-        { field: 'date', headerName: 'Date', width: 150 },
-        { field: 'time', headerName: 'Time', width: 150 },
+        { field: 'id', headerName: 'ID'},
+        { field: 'content', headerName: 'Content'},
+        { field: 'sauce', headerName: 'Sauce'},
+        { field: 'app', headerName: 'App'},
+        { field: 'date', headerName: 'Date'},
+        { field: 'time', headerName: 'Time'},
         {
             field: 'actions',
             headerName: 'Actions',

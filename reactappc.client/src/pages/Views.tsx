@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, IconButton, Card, CardContent, CardMedia, Typography, Stack, Box, Avatar, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
 
@@ -16,10 +16,15 @@ const Views: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
+    const [sortOption, setSortOption] = useState<string>('dateDesc');
 
     useEffect(() => {
         fetchPlaylists();
     }, []);
+
+    useEffect(() => {
+        setPlaylists(prev => sortPlaylists([...prev], sortOption));
+    }, [sortOption]);
 
     const fetchPlaylists = async () => {
         try {
@@ -28,7 +33,7 @@ const Views: React.FC = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            setPlaylists(data);
+            setPlaylists(sortPlaylists(data, sortOption));
         } catch (error) {
             console.error('Fetching error:', error);
         }
@@ -52,28 +57,68 @@ const Views: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Delete failed');
             }
-            fetchPlaylists();
+            await fetchPlaylists();
         } catch (error) {
             console.error('Delete error:', error);
+        }
+    };
+
+    const getAppFromUrl = (url: string): string => {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            return 'YouTube';
+        } else if (url.includes('vimeo.com')) {
+            return 'Vimeo';
+        } else if (url.includes('dailymotion.com')) {
+            return 'Dailymotion';
+        } else if (url.includes('twitch.tv')) {
+            return 'Twitch';
+        } else if (url.includes('instagram.com')) {
+            return 'Instagram';
+        } else {
+            return 'Unknown';
         }
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
+            const app = getAppFromUrl(formData.sauce || '');
+            const newPlaylist = {
+                ...formData,
+                app: app,
+            };
             const response = await fetch('https://localhost:7294/api/Playlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(newPlaylist),
             });
             if (!response.ok) {
                 throw new Error('Create failed');
             }
-            fetchPlaylists();
+            await fetchPlaylists();
             handleDialogClose();
         } catch (error) {
             console.error('Create error:', error);
         }
+    };
+
+    const sortPlaylists = (playlists: Playlist[], option: string): Playlist[] => {
+        return [...playlists].sort((a, b) => {
+            const dateTimeA = new Date(`${a.date}T${a.time}`);
+            const dateTimeB = new Date(`${b.date}T${b.time}`);
+            switch (option) {
+                case 'dateAsc':
+                    return dateTimeA.getTime() - dateTimeB.getTime();
+                case 'dateDesc':
+                    return dateTimeB.getTime() - dateTimeA.getTime();
+                case 'contentAsc':
+                    return a.content.localeCompare(b.content);
+                case 'contentDesc':
+                    return b.content.localeCompare(a.content);
+                default:
+                    return 0;
+            }
+        });
     };
 
     return (
@@ -81,6 +126,30 @@ const Views: React.FC = () => {
             <Typography variant="h4" component="h1" gutterBottom>
                 Video Feed
             </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                    <InputLabel id="sort-select-label">Sort by</InputLabel>
+                    <Select
+                        labelId="sort-select-label"
+                        value={sortOption}
+                        label="Sort by"
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <MenuItem value="dateDesc">Newest First</MenuItem>
+                        <MenuItem value="dateAsc">Oldest First</MenuItem>
+                        <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
+                        <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
+                    </Select>
+                </FormControl>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={handleCreate}
+                >
+                    Add Playlist
+                </Button>
+            </Box>
             <Stack spacing={2}>
                 {playlists.map((playlist) => (
                     <Card key={playlist.id} sx={{ boxShadow: 1 }}>
@@ -110,7 +179,7 @@ const Views: React.FC = () => {
                                 {playlist.content}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" component="p">
-                                {new Date(playlist.date).toLocaleDateString()} at {new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-UK', { hour12: false })}
+                                {playlist.date} at {playlist.time}
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
                                 <IconButton size="small" onClick={() => handleDelete(playlist.id)} color="error">
@@ -121,16 +190,6 @@ const Views: React.FC = () => {
                     </Card>
                 ))}
             </Stack>
-            <Box sx={{ marginTop: 2 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={handleCreate}
-                >
-                    Add Playlist
-                </Button>
-            </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Create Playlist</DialogTitle>
@@ -142,7 +201,7 @@ const Views: React.FC = () => {
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Content (YouTube URL)"
+                            label="Content"
                             type="text"
                             fullWidth
                             value={formData.content || ''}
@@ -150,19 +209,11 @@ const Views: React.FC = () => {
                         />
                         <TextField
                             margin="dense"
-                            label="Sauce"
+                            label="Sauce (Video URL)"
                             type="text"
                             fullWidth
                             value={formData.sauce || ''}
                             onChange={(e) => setFormData({ ...formData, sauce: e.target.value })}
-                        />
-                        <TextField
-                            margin="dense"
-                            label="App"
-                            type="text"
-                            fullWidth
-                            value={formData.app || ''}
-                            onChange={(e) => setFormData({ ...formData, app: e.target.value })}
                         />
                     </DialogContent>
                     <DialogActions>
