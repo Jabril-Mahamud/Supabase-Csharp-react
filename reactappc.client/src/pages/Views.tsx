@@ -8,8 +8,8 @@ interface Playlist {
     content: string;
     sauce: string;
     app: string;
-    date: string;
-    time: string;
+    date: string; // format: "2024-07-05 00:00:00.0000000"
+    time: string; // format: "22:01:07.9265252"
 }
 
 const Views: React.FC = () => {
@@ -107,17 +107,17 @@ const Views: React.FC = () => {
 
     const sortPlaylists = (playlists: Playlist[], option: string): Playlist[] => {
         return [...playlists].sort((a, b) => {
-            const dateA = new Date(`${a.date}T${a.time}`);
-            const dateB = new Date(`${b.date}T${b.time}`);
+            const dateTimeA = new Date(`${a.date}T${a.time}`);
+            const dateTimeB = new Date(`${b.date}T${b.time}`);
             switch (option) {
                 case 'dateAsc':
-                    return dateA.getTime() - dateB.getTime();
+                    return dateTimeA.getTime() - dateTimeB.getTime();
                 case 'dateDesc':
-                    return dateB.getTime() - dateA.getTime();
-                case 'appAsc':
-                    return a.app.localeCompare(b.app);
-                case 'appDesc':
-                    return b.app.localeCompare(a.app);
+                    return dateTimeB.getTime() - dateTimeA.getTime();
+                case 'contentAsc':
+                    return a.content.localeCompare(b.content);
+                case 'contentDesc':
+                    return b.content.localeCompare(a.content);
                 default:
                     return 0;
             }
@@ -140,8 +140,8 @@ const Views: React.FC = () => {
                     >
                         <MenuItem value="dateDesc">Newest First</MenuItem>
                         <MenuItem value="dateAsc">Oldest First</MenuItem>
-                        <MenuItem value="appAsc">App (A-Z)</MenuItem>
-                        <MenuItem value="appDesc">App (Z-A)</MenuItem>
+                        <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
+                        <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
                     </Select>
                 </FormControl>
                 <Button
@@ -217,24 +217,6 @@ const Views: React.FC = () => {
                             fullWidth
                             value={formData.sauce || ''}
                             onChange={(e) => setFormData({ ...formData, sauce: e.target.value })}
-                        />
-                        <TextField
-                            margin="dense"
-                            label="Date"
-                            type="date"
-                            fullWidth
-                            value={formData.date || ''}
-                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                            margin="dense"
-                            label="Time"
-                            type="time"
-                            fullWidth
-                            value={formData.time || ''}
-                            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                            InputLabelProps={{ shrink: true }}
                         />
                     </DialogContent>
                     <DialogActions>
