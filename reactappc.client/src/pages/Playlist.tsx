@@ -8,6 +8,7 @@ import {
     DialogTitle,
     TextField,
     IconButton,
+    Snackbar,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -26,6 +27,8 @@ const Playlist: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
     useEffect(() => {
         fetchPlaylists();
@@ -41,6 +44,7 @@ const Playlist: React.FC = () => {
             setPlaylists(data);
         } catch (error) {
             console.error('Fetching error:', error);
+            showSnackbar('Error fetching playlists');
         }
     };
 
@@ -63,8 +67,10 @@ const Playlist: React.FC = () => {
                 throw new Error('Delete failed');
             }
             fetchPlaylists();
+            showSnackbar('Playlist deleted successfully');
         } catch (error) {
             console.error('Delete error:', error);
+            showSnackbar('Error deleting playlist');
         }
     };
 
@@ -81,9 +87,16 @@ const Playlist: React.FC = () => {
             }
             fetchPlaylists();
             handleDialogClose();
+            showSnackbar('Playlist created successfully');
         } catch (error) {
             console.error('Create error:', error);
+            showSnackbar('Error creating playlist');
         }
+    };
+
+    const showSnackbar = (message: string) => {
+        setSnackbarMessage(message);
+        setSnackbarOpen(true);
     };
 
     const columns: GridColDef[] = [
@@ -153,7 +166,14 @@ const Playlist: React.FC = () => {
                             value={formData.sauce || ''}
                             onChange={(e) => setFormData({ ...formData, sauce: e.target.value })}
                         />
-
+                        <TextField
+                            margin="dense"
+                            label="App"
+                            type="text"
+                            fullWidth
+                            value={formData.app || ''}
+                            onChange={(e) => setFormData({ ...formData, app: e.target.value })}
+                        />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleDialogClose}>Cancel</Button>
@@ -161,6 +181,13 @@ const Playlist: React.FC = () => {
                     </DialogActions>
                 </form>
             </Dialog>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+                message={snackbarMessage}
+            />
         </div>
     );
 };

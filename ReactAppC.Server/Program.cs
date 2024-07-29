@@ -20,9 +20,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+
+builder.Services.Configure<SupabaseSettings>(
+    builder.Configuration.GetSection("Supabase"));
+
 // Swagger/OpenAPI configuration
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<SupabaseClientService>();
 
 var app = builder.Build();
 

@@ -1,114 +1,129 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ReactAppC.Server.Data;
 using ReactAppC.Server.Models;
+using static Supabase.Postgrest.Constants;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ReactAppC.Server.Data;
 
-namespace ReactAppC.Server.Controllers
+namespace ReactAppC.Server.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class PlaylistController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PlaylistController : ControllerBase
+    private readonly SupabaseClientService _supabaseClientService;
+
+    public PlaylistController(SupabaseClientService supabaseClientService)
     {
-        private readonly ApplicationDbContext _context;
+        _supabaseClientService = supabaseClientService;
+    }
 
-        public PlaylistController(ApplicationDbContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<object>>> GetPlaylists()
+    {
+        var client = _supabaseClientService.Client;
+        var response = await client.From<Playlist>().Get();
+
+        var playlists = response.Models.Select(p => new
         {
-            _context = context;
+            p.Id,
+            p.Content,
+            p.Sauce,
+            p.App,
+            Date = p.Date.ToString("yyyy-MM-dd"),
+            Time = p.Time.ToString(@"hh\:mm\:ss")
+        }).ToList();
+
+        return Ok(playlists);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<object>> GetPlaylist(int id)
+    {
+        var client = _supabaseClientService.Client;
+        var response = await client.From<Playlist>().Filter("id", Operator.Equals, id).Get();
+
+        var playlist = response.Models.FirstOrDefault();
+        if (playlist == null)
+        {
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Playlist>>> GetPlaylists()
+        return Ok(new
         {
-            var playlists = await _context.Playlists.ToListAsync();
-            return Ok(playlists.Select(p => new
-            {
-                p.Id,
-                p.Content,
-                p.Sauce,
-                p.App,
-                Date = p.Date.ToString("yyyy-MM-dd"),
-                Time = p.Time.ToString(@"hh\:mm\:ss")
-            }));
+            playlist.Id,
+            playlist.Content,
+            playlist.Sauce,
+            playlist.App,
+            Date = playlist.Date.ToString("yyyy-MM-dd"),
+            Time = playlist.Time.ToString(@"hh\:mm\:ss")
+        });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<object>> CreatePlaylist([FromBody] Playlist playlist)
+    {
+        var now = DateTime.UtcNow;
+        playlist.Date = now.Date;
+        playlist.Time = now.TimeOfDay;
+
+        var client = _supabaseClientService.Client;
+        var response = await client.From<Playlist>().Insert(playlist);
+
+        var createdPlaylist = response.Models.First();
+        return CreatedAtAction(nameof(GetPlaylist), new { id = createdPlaylist.Id }, new
+        {
+            createdPlaylist.Id,
+            createdPlaylist.Content,
+            createdPlaylist.Sauce,
+            createdPlaylist.App,
+            Date = createdPlaylist.Date.ToString("yyyy-MM-dd"),
+            Time = createdPlaylist.Time.ToString(@"hh\:mm\:ss")
+        });
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdatePlaylist(int id, [FromBody] Playlist updatedPlaylist)
+    {
+        if (id != updatedPlaylist.Id)
+        {
+            return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Playlist>> GetPlaylist(int id)
+        var client = _supabaseClientService.Client;
+        var existingResponse = await client.From<Playlist>().Filter("id", Operator.Equals, id).Get();
+        var existingPlaylist = existingResponse.Models.FirstOrDefault();
+
+        if (existingPlaylist == null)
         {
-            var playlist = await _context.Playlists.FindAsync(id);
-            if (playlist == null)
-            {
-                return NotFound();
-            }
-            return Ok(new
-            {
-                playlist.Id,
-                playlist.Content,
-                playlist.Sauce,
-                playlist.App,
-                Date = playlist.Date.ToString("yyyy-MM-dd"),
-                Time = playlist.Time.ToString(@"hh\:mm\:ss")
-            });
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Playlist>> CreatePlaylist([FromBody] Playlist playlist)
+        existingPlaylist.Content = updatedPlaylist.Content;
+        existingPlaylist.Sauce = updatedPlaylist.Sauce;
+        existingPlaylist.App = updatedPlaylist.App;
+        // Don't update Date and Time
+
+        await client.From<Playlist>().Update(existingPlaylist);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePlaylist(int id)
+    {
+        var client = _supabaseClientService.Client;
+
+        try
         {
-            var now = DateTime.UtcNow;
-            playlist.Date = now.Date;
-            playlist.Time = now.TimeOfDay;
-
-            _context.Playlists.Add(playlist);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetPlaylist), new { id = playlist.Id }, new
-            {
-                playlist.Id,
-                playlist.Content,
-                playlist.Sauce,
-                playlist.App,
-                Date = playlist.Date.ToString("yyyy-MM-dd"),
-                Time = playlist.Time.ToString(@"hh\:mm\:ss")
-            });
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePlaylist(int id, [FromBody] Playlist updatedPlaylist)
-        {
-            if (id != updatedPlaylist.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingPlaylist = await _context.Playlists.FindAsync(id);
-            if (existingPlaylist == null)
-            {
-                return NotFound();
-            }
-
-            existingPlaylist.Content = updatedPlaylist.Content;
-            existingPlaylist.Sauce = updatedPlaylist.Sauce;
-            existingPlaylist.App = updatedPlaylist.App;
-            // Don't update Date and Time
-
-            await _context.SaveChangesAsync();
+            await client.From<Playlist>().Filter("id", Operator.Equals, id).Delete();
             return NoContent();
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlaylist(int id)
+        catch (Exception ex)
         {
-            var playlist = await _context.Playlists.FindAsync(id);
-            if (playlist == null)
-            {
-                return NotFound();
-            }
-
-            _context.Playlists.Remove(playlist);
-            await _context.SaveChangesAsync();
-            return NoContent();
+            // Log the exception if you have a logging mechanism
+            return NotFound($"Playlist with id {id} not found or could not be deleted.");
         }
     }
 }
