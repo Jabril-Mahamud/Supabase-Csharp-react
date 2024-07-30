@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Typography, Container, Box, Button, CircularProgress } from '@mui/material';
 
+interface User {
+    id: string;
+    email: string;
+    // Add other user properties as needed
+}
+
 function Dashboard() {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -16,12 +22,16 @@ function Dashboard() {
                     navigate('/login');
                     return;
                 }
-                const response = await axios.get('/api/auth/user', {
+                const response = await axios.get<User>('https://localhost:7294/api/Auth/user', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(response.data);
             } catch (error) {
                 console.error('Failed to fetch user', error);
+                if (axios.isAxiosError(error)) {
+                    const axiosError = error as AxiosError;
+                    console.error('Error response:', axiosError.response);
+                }
                 navigate('/login');
             } finally {
                 setLoading(false);
@@ -56,11 +66,13 @@ function Dashboard() {
                 <Typography component="h1" variant="h4" className="mb-4">
                     Welcome to your Dashboard
                 </Typography>
-                <Box className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <Typography variant="h6" className="mb-2">User Information</Typography>
-                    <Typography>Email: {user.email}</Typography>
-                    <Typography>User ID: {user.id}</Typography>
-                </Box>
+                {user && (
+                    <Box className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                        <Typography variant="h6" className="mb-2">User Information</Typography>
+                        <Typography>Email: {user.email}</Typography>
+                        <Typography>User ID: {user.id}</Typography>
+                    </Box>
+                )}
                 <Button
                     variant="contained"
                     color="secondary"

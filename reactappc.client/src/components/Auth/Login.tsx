@@ -1,24 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
 
+interface LoginResponse {
+    token: string;
+}
+
 function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
-            localStorage.setItem('token', response.data.token);
-            setSuccess('Login successful! Redirecting to dashboard...');
-            setTimeout(() => navigate('/dashboard'), 2000);
+            const response = await axios.post<LoginResponse>('https://localhost:7294/api/Auth/login', { email, password });
+            console.log('Login response:', response); // Add this line for debugging
+            if (response.data && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                setSuccess('Login successful! Redirecting to dashboard...');
+                setTimeout(() => navigate('/dashboard'), 2000);
+            } else {
+                setError('Login failed. Unexpected response format.');
+                console.error('Unexpected response format:', response.data);
+            }
         } catch (error) {
-            setError('Login failed. Please check your credentials.');
+            console.error('Login error:', error);
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<{ message: string }>;
+                setError(`Login failed: ${axiosError.response?.data?.message || axiosError.message}`);
+            } else {
+                setError(`Login failed: ${(error as Error).message}`);
+            }
         }
     };
 

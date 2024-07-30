@@ -1,23 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
 
+interface RegisterResponse {
+    message: string;
+}
+
 function Register() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
         try {
-            await axios.post('/api/auth/register', { email, password });
-            setSuccess('Registration successful! Redirecting to login...');
+            const response = await axios.post<RegisterResponse>('https://localhost:7294/api/Auth/register', { email, password });
+            console.log('Register response:', response); // Add this line for debugging
+            setSuccess(response.data.message || 'Registration successful! Redirecting to login...');
             setTimeout(() => navigate('/login'), 2000);
         } catch (error) {
-            setError('Registration failed. Please try again.');
+            console.error('Registration error:', error);
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<{ message: string }>;
+                setError(`Registration failed: ${axiosError.response?.data?.message || axiosError.message}`);
+            } else {
+                setError(`Registration failed: ${(error as Error).message}`);
+            }
         }
     };
 
