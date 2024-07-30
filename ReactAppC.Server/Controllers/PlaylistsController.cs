@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ReactAppC.Server.Data;
+using static Supabase.Postgrest.Constants;
 
 namespace ReactAppC.Server.Controllers;
 
@@ -25,7 +26,6 @@ public class PlaylistController : ControllerBase
     {
         var client = _supabaseClientService.Client;
         var response = await client.From<Playlist>().Get();
-
         var playlists = response.Models.Select(p => new
         {
             p.Id,
@@ -35,7 +35,6 @@ public class PlaylistController : ControllerBase
             Date = p.Date.ToString("yyyy-MM-dd"),
             Time = p.Time.ToString(@"hh\:mm\:ss")
         }).ToList();
-
         return Ok(playlists);
     }
 
@@ -44,13 +43,11 @@ public class PlaylistController : ControllerBase
     {
         var client = _supabaseClientService.Client;
         var response = await client.From<Playlist>().Filter("id", Operator.Equals, id).Get();
-
         var playlist = response.Models.FirstOrDefault();
         if (playlist == null)
         {
             return NotFound();
         }
-
         return Ok(new
         {
             playlist.Id,
@@ -68,10 +65,8 @@ public class PlaylistController : ControllerBase
         var now = DateTime.UtcNow;
         playlist.Date = now.Date;
         playlist.Time = now.TimeOfDay;
-
         var client = _supabaseClientService.Client;
         var response = await client.From<Playlist>().Insert(playlist);
-
         var createdPlaylist = response.Models.First();
         return CreatedAtAction(nameof(GetPlaylist), new { id = createdPlaylist.Id }, new
         {
@@ -91,30 +86,28 @@ public class PlaylistController : ControllerBase
         {
             return BadRequest();
         }
-
         var client = _supabaseClientService.Client;
         var existingResponse = await client.From<Playlist>().Filter("id", Operator.Equals, id).Get();
         var existingPlaylist = existingResponse.Models.FirstOrDefault();
-
         if (existingPlaylist == null)
         {
             return NotFound();
         }
-
         existingPlaylist.Content = updatedPlaylist.Content;
         existingPlaylist.Sauce = updatedPlaylist.Sauce;
         existingPlaylist.App = updatedPlaylist.App;
-        // Don't update Date and Time
-
-        await client.From<Playlist>().Update(existingPlaylist);
-        return NoContent();
+        var updateResponse = await client.From<Playlist>().Update(existingPlaylist);
+        if (updateResponse.Models.Any())
+        {
+            return NoContent();
+        }
+        return BadRequest("Failed to update the playlist.");
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePlaylist(int id)
     {
         var client = _supabaseClientService.Client;
-
         try
         {
             await client.From<Playlist>().Filter("id", Operator.Equals, id).Delete();
