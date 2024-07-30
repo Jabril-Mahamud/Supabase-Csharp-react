@@ -18,12 +18,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Navbar />
             <div className="mt-16">
                 <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/" element={<App />} />
                     <Route path="/playlist" element={<Playlist />} />
                     <Route path="/home" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/views" element={<Views />} />
