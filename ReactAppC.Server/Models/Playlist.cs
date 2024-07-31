@@ -26,6 +26,9 @@ namespace ReactAppC.Server.Models
         [Column("time")]
         public TimeSpan Time { get; set; }
 
+        [Column("user_id")]
+        public string UserId { get; set; }  // Add this line
+
         public override bool Equals(object obj)
         {
             return obj is Playlist playlist &&
