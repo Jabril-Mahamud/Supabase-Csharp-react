@@ -1,106 +1,25 @@
-# ReactAppC
-## Overview
+# Supabase C# React Application
 
-ReactAppC is a full-stack web application developed with React, TypeScript, and Vite for the client side and ASP.NET Core for the server side. This application demonstrates the integration of a modern React frontend with a robust .NET backend.
+This project is a web application that uses Supabase as a backend, C# for server-side logic, and React for the frontend.
+Project Overview
+This application demonstrates the integration of Supabase with a C# backend and a React frontend. It showcases how to build a modern, full-stack application using these technologies.
 Features
 
-    Client:
-        Built with React and TypeScript.
-        Utilizes Vite for fast development and build processes.
-        Includes routing, state management, and API integration.
-        Styled using Tailwind CSS.
-        Components for Home, About, Contact, Playlist, and Views pages.
-    Server:
-        Built with ASP.NET Core Web API.
-        Entity Framework Core for database interactions.
-        Controllers for handling Playlists and WeatherForecast.
-        Swagger/OpenAPI for API documentation.
 
-##Getting Started
-###Prerequisites
+## Technologies Used
 
-    Node.js
-    .NET SDK
+Frontend: React
+Backend: C#
+Database and Authentication: Supabase
 
-##Installation
+## Getting Started
+### Prerequisites
 
-###Clone the repository:
+.NET SDK (version X.X or higher)
+Node.js (version X.X or higher)
+npm (version X.X or higher)
+A Supabase account and project
 
-    git clone https://github.com/Jabril-Mahamud/ReactAppC.git
+## Installation
 
-    cd ReactAppC
-
-###Install client dependencies:
-
-   
-    cd reactappc.client
-    npm install
-
-###Install server dependencies:
-
-    cd ../ReactAppC.Server
-    dotnet restore
-
-##Running the Application
-
-###Start the server:
-
-    cd ReactAppC.Server
-    dotnet run
-  
-###Start the client:
-
-   
-    cd ../reactappc.client
-    npm run dev
-
-    Open your browser and navigate to https://localhost:7294 for the server and https://localhost:5173 for the client.
-
-#Project Structure
-
-    ReactAppC
-    ├── ReactAppC.Server
-    │   ├── Controllers
-    │   │   ├── PlaylistsController.cs
-    │   │   └── WeatherForecastController.cs
-    │   ├── Data
-    │   │   └── PlaylistContext.cs
-    │   ├── Migrations
-    │   │   ├── 20240705202100_IntialCreate.Designer.cs
-    │   │   ├── 20240705202100_IntialCreate.cs
-    │   │   └── ApplicationDbContextModelSnapshot.cs
-    │   ├── Models
-    │   │   ├── Playlist.cs
-    │   │   └── WeatherForecast.cs
-    │   ├── Program.cs
-    │   ├── Properties
-    │   │   └── launchSettings.json
-    │   └── appsettings.json
-    └── reactappc.client
-        ├── public
-        │   └── vite.svg
-        ├── src
-        │   ├── App.tsx
-        │   ├── Navbar
-        │   │   └── Navbar.tsx
-        │   ├── assets
-        │   │   └── react.svg
-        │   ├── index.css
-        │   ├── main.tsx
-        │   ├── pages
-        │   │   ├── About.tsx
-        │   │   ├── Contact.tsx
-        │   │   ├── Home.tsx
-        │   │   ├── Playlist.tsx
-        │   │   └── Views.tsx
-        ├── .eslintrc.cjs
-        ├── package.json
-        ├── postcss.config.js
-        ├── tailwind.config.js
-        ├── tsconfig.json
-        ├── tsconfig.node.json
-        └── vite.config.ts
-    
-Additional Information
-
-For more details on the configuration and setup, please refer to the CHANGELOG.md files located in both the client and server directories.
+Clone the repository:
