@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemText, Avatar, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../Auth/AuthContext';
 
 const Navbar: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const { isLoggedIn, logout } = useAuth();
+    const navigate = useNavigate();
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
@@ -18,6 +22,32 @@ const Navbar: React.FC = () => {
         setDrawerOpen(open);
     };
 
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        logout();
+        handleMenuClose();
+        navigate('/');
+    };
+
+    const menuItems = [
+        { label: 'Home', to: '/' },
+        { label: 'About', to: '/about' },
+        { label: 'Views', to: '/views' },
+        { label: 'Contact', to: '/contact' },
+    ];
+
+    // Add Playlist to menuItems only if user is logged in
+    if (isLoggedIn) {
+        menuItems.push({ label: 'Playlist', to: '/playlist' });
+    }
+
     const drawerList = () => (
         <Box
             sx={{ width: 250 }}
@@ -26,9 +56,9 @@ const Navbar: React.FC = () => {
             onKeyDown={toggleDrawer(false)}
         >
             <List>
-                {['Home', 'About', 'Views', 'Contact', 'Playlist'].map((text) => (
-                    <ListItem button key={text} component={Link} to={`/${text.toLowerCase()}`}>
-                        <ListItemText primary={text} />
+                {menuItems.map((item, index) => (
+                    <ListItem button key={index} component={Link} to={item.to}>
+                        <ListItemText primary={item.label} />
                     </ListItem>
                 ))}
             </List>
@@ -54,21 +84,35 @@ const Navbar: React.FC = () => {
                         </Link>
                     </Typography>
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-                        <Button color="inherit" component={Link} to="/">
-                            Home
-                        </Button>
-                        <Button color="inherit" component={Link} to="/about">
-                            About
-                        </Button>
-                        <Button color="inherit" component={Link} to="/views">
-                            Views
-                        </Button>
-                        <Button color="inherit" component={Link} to="/contact">
-                            Contact
-                        </Button>
-                        <Button color="inherit" component={Link} to="/playlist">
-                            Playlist
-                        </Button>
+                        {menuItems.map((item, index) => (
+                            <Button key={index} color="inherit" component={Link} to={item.to}>
+                                {item.label}
+                            </Button>
+                        ))}
+                        <IconButton
+                            edge="end"
+                            color="inherit"
+                            onClick={handleMenuOpen}
+                        >
+                            <Avatar alt="Profile" />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleMenuClose}
+                        >
+                            {isLoggedIn ? (
+                                <>
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/dashboard">Dashboard</MenuItem>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                </>
+                            ) : (
+                                <>
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/login">Login</MenuItem>
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/register">Register</MenuItem>
+                                </>
+                            )}
+                        </Menu>
                     </Box>
                 </Toolbar>
             </AppBar>

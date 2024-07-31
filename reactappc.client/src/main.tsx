@@ -11,9 +11,11 @@ import Views from './pages/Views';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Auth/Dashboard';
+import { AuthProvider } from './components/Auth/AuthContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
+    <AuthProvider>
         <Router>
             <Navbar />
             <div className="mt-16">
@@ -29,6 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/views" element={<Views />} />
                 </Routes>
             </div>
-        </Router>
+            </Router>
+        </AuthProvider>
     </React.StrictMode>,
 );

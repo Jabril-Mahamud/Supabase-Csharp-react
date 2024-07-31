@@ -21,6 +21,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 // Configure Supabase settings
 builder.Services.Configure<SupabaseSettings>(
     builder.Configuration.GetSection("Supabase"));
@@ -40,6 +41,9 @@ builder.Services.AddSingleton(provider =>
 
     return new Client(supabaseUrl, supabaseKey, options);
 });
+
+builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
+builder.Services.AddSingleton<SupabaseClientService>();
 
 // Swagger/OpenAPI configuration
 builder.Services.AddEndpointsApiExplorer();

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
+import { useAuth } from './AuthContext';
 
 interface LoginResponse {
     token: string;
@@ -13,6 +14,7 @@ function Login() {
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
     const navigate = useNavigate();
+    const { setIsLoggedIn } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -20,9 +22,10 @@ function Login() {
         setSuccess('');
         try {
             const response = await axios.post<LoginResponse>('https://localhost:7294/api/Auth/login', { email, password });
-            console.log('Login response:', response); // Add this line for debugging
+            console.log('Login response:', response);
             if (response.data && response.data.token) {
                 localStorage.setItem('token', response.data.token);
+                setIsLoggedIn(true);
                 setSuccess('Login successful! Redirecting to dashboard...');
                 setTimeout(() => navigate('/dashboard'), 2000);
             } else {
