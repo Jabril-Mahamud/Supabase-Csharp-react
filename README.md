@@ -23,3 +23,5 @@ A Supabase account and project
 ## Installation
 
 Clone the repository:
+
+add in the correct secrets and url
