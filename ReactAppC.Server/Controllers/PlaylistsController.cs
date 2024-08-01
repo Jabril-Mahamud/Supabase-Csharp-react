@@ -74,6 +74,31 @@ namespace ReactAppC.Server.Controllers
             }
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<object>>> GetPlaylistsByUserId(string userId) // Ensure userId is string
+        {
+            try
+            {
+                var client = _supabaseClientService.Client;
+                var response = await client.From<Playlist>().Filter("user_id", Operator.Equals, userId).Get();
+                var playlists = response.Models.Select(p => new
+                {
+                    p.Id,
+                    p.Content,
+                    p.Sauce,
+                    p.App,
+                    Date = p.Date.ToString("yyyy-MM-dd"),
+                    Time = p.Time.ToString(@"hh\:mm\:ss")
+                }).ToList();
+                return Ok(playlists);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if you have a logging mechanism
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<object>> CreatePlaylist([FromBody] Playlist playlist)
         {
@@ -91,6 +116,7 @@ namespace ReactAppC.Server.Controllers
                     createdPlaylist.Content,
                     createdPlaylist.Sauce,
                     createdPlaylist.App,
+                    createdPlaylist.User_id,
                     Date = createdPlaylist.Date.ToString("yyyy-MM-dd"),
                     Time = createdPlaylist.Time.ToString(@"hh\:mm\:ss")
                 });
@@ -122,6 +148,7 @@ namespace ReactAppC.Server.Controllers
                 existingPlaylist.Content = updatedPlaylist.Content;
                 existingPlaylist.Sauce = updatedPlaylist.Sauce;
                 existingPlaylist.App = updatedPlaylist.App;
+                existingPlaylist.User_id = updatedPlaylist.User_id;
                 var updateResponse = await client.From<Playlist>().Update(existingPlaylist);
                 if (updateResponse.Models.Any())
                 {

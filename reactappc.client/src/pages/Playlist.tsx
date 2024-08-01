@@ -13,6 +13,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import { useAuth } from '../components/Auth/AuthContext';  // Import the authentication context
 
 interface Playlist {
     id: number;
@@ -24,19 +25,41 @@ interface Playlist {
 }
 
 const Playlist: React.FC = () => {
+    const { isLoggedIn, logout } = useAuth();
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<Playlist>>({});
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+    const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchPlaylists();
-    }, []);
+        const fetchUserId = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    logout();
+                    return;
+                }
+                const response = await fetch('https://localhost:7294/api/Auth/user', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const user = await response.json();
+                setUserId(user.id);
+                fetchPlaylists(user.id);
+            } catch (error) {
+                console.error('Error fetching user ID:', error);
+            }
+        };
 
-    const fetchPlaylists = async () => {
+        if (isLoggedIn) {
+            fetchUserId();
+        }
+    }, [isLoggedIn, logout]);
+
+    const fetchPlaylists = async (userId: string) => {
         try {
-            const response = await fetch('https://localhost:7294/api/Playlist');
+            const response = await fetch(`https://localhost:7294/api/Playlist/user/${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -45,6 +68,22 @@ const Playlist: React.FC = () => {
         } catch (error) {
             console.error('Fetching error:', error);
             showSnackbar('Error fetching playlists');
+        }
+    };
+
+    const getAppFromUrl = (url: string): string => {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            return 'YouTube';
+        } else if (url.includes('vimeo.com')) {
+            return 'Vimeo';
+        } else if (url.includes('dailymotion.com')) {
+            return 'Dailymotion';
+        } else if (url.includes('twitch.tv')) {
+            return 'Twitch';
+        } else if (url.includes('instagram.com')) {
+            return 'Instagram';
+        } else {
+            return 'Unknown';
         }
     };
 
@@ -66,7 +105,9 @@ const Playlist: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Delete failed');
             }
-            fetchPlaylists();
+            if (userId) {
+                fetchPlaylists(userId);
+            }
             showSnackbar('Playlist deleted successfully');
         } catch (error) {
             console.error('Delete error:', error);
@@ -77,15 +118,18 @@ const Playlist: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
+            const app = getAppFromUrl(formData.sauce || '');
             const response = await fetch('https://localhost:7294/api/Playlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, app, user_id: userId }),  // Add app and user_id to the formData
             });
             if (!response.ok) {
                 throw new Error('Create failed');
             }
-            fetchPlaylists();
+            if (userId) {
+                fetchPlaylists(userId);
+            }
             handleDialogClose();
             showSnackbar('Playlist created successfully');
         } catch (error) {
@@ -160,24 +204,27 @@ const Playlist: React.FC = () => {
                         />
                         <TextField
                             margin="dense"
-                            label="Sauce"
+                            label="Sauce (Video URL)"
                             type="text"
                             fullWidth
                             value={formData.sauce || ''}
-                            onChange={(e) => setFormData({ ...formData, sauce: e.target.value })}
-                        />
-                        <TextField
-                            margin="dense"
-                            label="App"
-                            type="text"
-                            fullWidth
-                            value={formData.app || ''}
-                            onChange={(e) => setFormData({ ...formData, app: e.target.value })}
+                            onChange={(e) => {
+                                const url = e.target.value;
+                                setFormData({
+                                    ...formData,
+                                    sauce: url,
+                                    app: getAppFromUrl(url),  // Automatically set the app based on the URL
+                                });
+                            }}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleDialogClose}>Cancel</Button>
-                        <Button type="submit">Create</Button>
+                        <Button onClick={handleDialogClose} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" color="primary">
+                            Create
+                        </Button>
                     </DialogActions>
                 </form>
             </Dialog>
