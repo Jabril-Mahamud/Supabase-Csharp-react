@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ReactAppC.Server.Models;
+using ReactAppC.Server.Models.SupabaseModels;
 
 namespace ReactAppC.Server.Data
 {
