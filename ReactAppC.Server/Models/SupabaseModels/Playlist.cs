@@ -27,7 +27,7 @@ namespace ReactAppC.Server.Models.SupabaseModels
         public TimeSpan Time { get; set; }
 
         [Column("user_id")]
-        public string UserId { get; set; }  // Add this line
+        public string User_id { get; set; }  // Add this line
 
         public override bool Equals(object obj)
         {
