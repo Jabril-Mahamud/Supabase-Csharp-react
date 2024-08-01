@@ -1,10 +1,10 @@
 ﻿// Controllers/AuthController.cs
 using Microsoft.AspNetCore.Mvc;
-using ReactAppC.Server.Models;
 using System.Threading.Tasks;
 using Supabase.Gotrue;
 using Supabase;
 using System;
+using ReactAppC.Server.Models.AuthModels;
 
 namespace ReactAppC.Server.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ReactAppC.Server.Models
+namespace ReactAppC.Server.Models.AuthModels
 {
     public class RegisterUserModel
     {

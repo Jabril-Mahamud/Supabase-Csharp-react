@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReactAppC.Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ReactAppC.Server.Data;
 using static Supabase.Postgrest.Constants;
+using ReactAppC.Server.Models.SupabaseModels;
 
 namespace ReactAppC.Server.Controllers
 {

@@ -3,7 +3,7 @@ using Supabase.Postgrest.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ReactAppC.Server.Models
+namespace ReactAppC.Server.Models.SupabaseModels
 {
     [Table("playlists")] // Use the exact table name in lowercase as per PostgreSQL convention
     public class Playlist : BaseModel
