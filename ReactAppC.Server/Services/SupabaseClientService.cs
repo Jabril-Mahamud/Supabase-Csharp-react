@@ -17,7 +17,7 @@ namespace ReactAppC.Server.Data
                 AutoRefreshToken = true
             };
 
-            _client = new Supabase.Client(settings.Value.Url, settings.Value.Secret, options);
+            _client = new Supabase.Client(settings.Value.Url, settings.Value.Key, options);
         }
 
         public Supabase.Client Client => _client;

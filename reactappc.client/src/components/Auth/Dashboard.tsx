@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { Typography, Container, Box, Button, CircularProgress } from '@mui/material';
