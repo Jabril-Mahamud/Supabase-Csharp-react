@@ -100,7 +100,6 @@ const Playlist: React.FC = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <h1>Playlists</h1>
             <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
             <Button
                 variant="contained"

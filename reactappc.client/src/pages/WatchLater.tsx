@@ -153,15 +153,11 @@ const WatchLater: React.FC = () => {
                         ))}
                     </Stack>
                 ) : (
-                    <PlaylistTable
-                        playlists={playlists}
-                        onDelete={handleDelete}
-                    />
+                    <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
                 )
             ) : (
                 <Box>
-                    <Typography variant="h6">Summary View Content</Typography>
-                    {/* Replace with actual summary view content */}
+                        <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
                 </Box>
             )}
 
