@@ -149,6 +149,7 @@ const WatchLater: React.FC = () => {
                                 key={playlist.id}
                                 playlist={playlist}
                                 onDelete={handleDelete}
+                                aspectRatio={16 / 9}
                             />
                         ))}
                     </Stack>
