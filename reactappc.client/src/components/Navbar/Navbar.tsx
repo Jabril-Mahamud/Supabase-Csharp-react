@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
     // Add Playlist to menuItems only if user is logged in
     if (isLoggedIn) {
         menuItems.push({ label: 'Playlist', to: '/playlist' });
-        menuItems.push({label: 'views', to: '/views' });
+        menuItems.push({label: 'watch later', to: '/watchlater' });
     }
 
     const drawerList = () => (
