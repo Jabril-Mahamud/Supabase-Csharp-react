@@ -3,7 +3,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, Typograp
 import AddIcon from '@mui/icons-material/Add';
 import PlaylistCard from '../components/Playlist/PlaylistCard';
 import PlaylistDialog from '../components/Playlist/PlaylistDialog';
-import PlaylistTable from '../components/Playlist/PlaylistTable'; // Import PlaylistTable component
+import PlaylistTable from '../components/Playlist/PlaylistTable';
 import { getAppFromUrl, sortPlaylists } from '../services/utils';
 import { fetchAllPlaylists, fetchIdPlaylists, deletePlaylist, createPlaylist, fetchUserId } from '../services/playlistService';
 import { useAuth } from '../components/Auth/AuthContext';
@@ -25,7 +25,7 @@ const WatchLater: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [sortOption, setSortOption] = useState<string>('dateDesc');
-    const [viewOption, setViewOption] = useState<'playlist' | 'views'>('playlist'); // View option state
+    const [viewOption, setViewOption] = useState<'playlist' | 'views'>('playlist'); 
 
     useEffect(() => {
         const loadPlaylists = async () => {

@@ -15,11 +15,11 @@ interface Playlist {
 interface PlaylistCardProps {
     playlist: Playlist;
     onDelete: (id: number) => void;
-    aspectRatio?: number; // Aspect ratio prop (e.g., 16/9 for a widescreen aspect ratio)
+    aspectRatio?: number;
 }
 
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectRatio = 4 / 3 }) => {
-    const paddingTop = `${(1 / aspectRatio) * 100}%`; // Calculate padding-top based on aspect ratio
+    const paddingTop = `${(1 / aspectRatio) * 100}%`; 
 
     return (
         <Card sx={{
