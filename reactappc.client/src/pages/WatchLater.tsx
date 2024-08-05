@@ -25,7 +25,7 @@ const WatchLater: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [sortOption, setSortOption] = useState<string>('dateDesc');
-    const [viewOption, setViewOption] = useState<'playlist' | 'views'>('playlist'); 
+    const [viewOption, setViewOption] = useState<'playlist' | 'views'>('playlist');
 
     useEffect(() => {
         const loadPlaylists = async () => {
@@ -104,31 +104,16 @@ const WatchLater: React.FC = () => {
                 {viewOption === 'playlist' ? 'Playlists' : 'Video Feed'}
             </Typography>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <Button
-                    variant="outlined"
-                    onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
-                    sx={{ marginBottom: 2 }}
-                >
-                    {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
-                </Button>
+            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                <Stack spacing={2} sx={{ marginRight: 2 }}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
+                    >
+                        {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
+                    </Button>
 
-                {viewOption === 'playlist' && isLoggedIn && (
-                    <>
-                        <FormControl sx={{ minWidth: 120 }}>
-                            <InputLabel id="sort-select-label">Sort by</InputLabel>
-                            <Select
-                                labelId="sort-select-label"
-                                value={sortOption}
-                                label="Sort by"
-                                onChange={(e) => setSortOption(e.target.value)}
-                            >
-                                <MenuItem value="dateDesc">Newest First</MenuItem>
-                                <MenuItem value="dateAsc">Oldest First</MenuItem>
-                                <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
-                                <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
-                            </Select>
-                        </FormControl>
+                    {viewOption === 'playlist' && isLoggedIn && (
                         <Button
                             variant="contained"
                             color="primary"
@@ -137,7 +122,24 @@ const WatchLater: React.FC = () => {
                         >
                             Create Playlist
                         </Button>
-                    </>
+                    )}
+                </Stack>
+
+                {viewOption === 'playlist' && isLoggedIn && (
+                    <FormControl sx={{ minWidth: 120, marginLeft: 'auto' }}>
+                        <InputLabel id="sort-select-label">Sort by</InputLabel>
+                        <Select
+                            labelId="sort-select-label"
+                            value={sortOption}
+                            label="Sort by"
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
+                            <MenuItem value="dateDesc">Newest First</MenuItem>
+                            <MenuItem value="dateAsc">Oldest First</MenuItem>
+                            <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
+                            <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
+                        </Select>
+                    </FormControl>
                 )}
             </Box>
 
@@ -158,7 +160,7 @@ const WatchLater: React.FC = () => {
                 )
             ) : (
                 <Box>
-                        <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
+                    <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
                 </Box>
             )}
 
