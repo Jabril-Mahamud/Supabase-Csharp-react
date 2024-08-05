@@ -19,41 +19,56 @@ interface PlaylistCardProps {
 
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete }) => {
     return (
-        <Card sx={{ boxShadow: 1 }}>
-            <CardContent sx={{ paddingBottom: 0 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
-                    <Avatar sx={{ marginRight: 2 }}>
-                        {playlist.app[0].toUpperCase()}
-                    </Avatar>
-                    <Typography variant="subtitle1" component="span" sx={{ flexGrow: 1 }}>
-                        {playlist.app}
+        <Card sx={{
+            boxShadow: 1,
+            width: '100%',
+            paddingTop: '75%', // 4:3 aspect ratio
+            position: 'relative',
+        }}>
+            <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
+                <CardContent sx={{ flexShrink: 0, paddingBottom: 0 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+                        <Avatar sx={{ marginRight: 2 }}>
+                            {playlist.app[0].toUpperCase()}
+                        </Avatar>
+                        <Typography variant="subtitle1" component="span" sx={{ flexGrow: 1 }}>
+                            {playlist.app}
+                        </Typography>
+                        <IconButton size="small">
+                            <MoreVertIcon />
+                        </IconButton>
+                    </Box>
+                </CardContent>
+                <CardMedia sx={{ flex: 1, minHeight: 0 }}>
+                    <ReactPlayer
+                        url={playlist.sauce}
+                        width="100%"
+                        height="100%"
+                        controls
+                    />
+                </CardMedia>
+                <CardContent sx={{ flexShrink: 0 }}>
+                    <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                        {playlist.content}
                     </Typography>
-                    <IconButton size="small">
-                        <MoreVertIcon />
-                    </IconButton>
-                </Box>
-            </CardContent>
-            <CardMedia>
-                <ReactPlayer
-                    url={playlist.sauce}
-                    width="100%"
-                    height="300px"
-                    controls
-                />
-            </CardMedia>
-            <CardContent>
-                <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                    {playlist.content}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" component="p">
-                    {playlist.date} at {playlist.time}
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
-                    <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
-            </CardContent>
+                    <Typography variant="caption" color="text.secondary" component="p">
+                        {playlist.date} at {playlist.time}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
+                        <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
+                </CardContent>
+            </Box>
         </Card>
     );
 };

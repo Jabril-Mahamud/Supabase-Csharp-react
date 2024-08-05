@@ -10,8 +10,6 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Auth/Dashboard';
 import { AuthProvider } from './components/Auth/AuthContext';
-import Playlist from './pages/Playlist';
-import Views from './pages/Views';
 import WatchLater from './pages/WatchLater';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -28,8 +26,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />
-                    <Route path="/playlist" element={<Playlist />} />
-                    <Route path="/views" element={<Views />} />
                     <Route path="watchlater" element={<WatchLater />} />"
                 </Routes>
             </div>
