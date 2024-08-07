@@ -39,13 +39,11 @@ const Navbar: React.FC = () => {
     const menuItems = [
         { label: 'Home', to: '/' },
         { label: 'About', to: '/about' },
-        { label: 'Views', to: '/views' },
-        { label: 'Contact', to: '/contact' },
     ];
 
     // Add Playlist to menuItems only if user is logged in
     if (isLoggedIn) {
-        menuItems.push({ label: 'Playlist', to: '/playlist' });
+        menuItems.push({label: 'watch later', to: '/watchlater' });
     }
 
     const drawerList = () => (
@@ -101,15 +99,17 @@ const Navbar: React.FC = () => {
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
                         >
-                            {isLoggedIn ? (
+                            {!(isLoggedIn )? (
                                 <>
-                                    <MenuItem onClick={handleMenuClose} component={Link} to="/dashboard">Dashboard</MenuItem>
-                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/login">Login</MenuItem>
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/register">Register</MenuItem>
                                 </>
                             ) : (
                                 <>
-                                    <MenuItem onClick={handleMenuClose} component={Link} to="/login">Login</MenuItem>
-                                    <MenuItem onClick={handleMenuClose} component={Link} to="/register">Register</MenuItem>
+
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/dashboard">Dashboard</MenuItem>
+                                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                 </>
                             )}
                         </Menu>
