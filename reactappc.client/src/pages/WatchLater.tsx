@@ -66,7 +66,6 @@ const WatchLater: React.FC = () => {
     const handleDelete = async (id: number) => {
         try {
             await deletePlaylist(id);
-            await loadPlaylists();
             showSnackbar('Playlist deleted successfully');
         } catch (error) {
             console.error('Delete error:', error);
@@ -80,7 +79,6 @@ const WatchLater: React.FC = () => {
             const app = getAppFromUrl(formData.sauce || '');
             const newPlaylist = { ...formData, app };
             await createPlaylist(newPlaylist);
-            await loadPlaylists();
             handleDialogClose();
             showSnackbar('Playlist created successfully');
         } catch (error) {

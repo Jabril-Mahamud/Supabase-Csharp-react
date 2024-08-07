@@ -27,6 +27,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectR
             width: '100%',
             paddingTop: paddingTop,
             position: 'relative',
+
         }}>
             <Box sx={{
                 position: 'absolute',
