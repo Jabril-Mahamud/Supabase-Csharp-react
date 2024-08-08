@@ -19,15 +19,18 @@ interface PlaylistCardProps {
 }
 
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectRatio = 4 / 3 }) => {
-    const paddingTop = `${(1 / aspectRatio) * 100}%`; 
+    const cardHeight = '25%'; // Adjust this value as needed
+    const paddingTop = `${(1 / aspectRatio) * 100}%`;
 
     return (
         <Card sx={{
             boxShadow: 1,
             width: '100%',
+            height: '60%',
+            maxHeight: cardHeight, // Set the max height for the card
             paddingTop: paddingTop,
             position: 'relative',
-
+            overflow: 'hidden', // Prevent content overflow
         }}>
             <Box sx={{
                 position: 'absolute',
@@ -60,13 +63,15 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectR
                     />
                 </CardMedia>
                 <CardContent sx={{ flexShrink: 0 }}>
-                    <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                        {playlist.content}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" component="p">
-                        {playlist.date} at {playlist.time}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                            <Typography variant="body2" component="p" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                                {playlist.content}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" component="p">
+                                {playlist.date} at {playlist.time}
+                            </Typography>
+                        </Box>
                         <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
                             <DeleteIcon />
                         </IconButton>
