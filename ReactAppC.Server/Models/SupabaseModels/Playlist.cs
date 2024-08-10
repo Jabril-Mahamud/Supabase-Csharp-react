@@ -17,6 +17,9 @@ namespace ReactAppC.Server.Models.SupabaseModels
         [Column("sauce")]
         public string Sauce { get; set; }
 
+        [Column("Completed")]
+        public string Completed { get; set; }
+
         [Column("app")]
         public string App { get; set; }
 
@@ -27,7 +30,7 @@ namespace ReactAppC.Server.Models.SupabaseModels
         public TimeSpan Time { get; set; }
 
         [Column("user_id")]
-        public string User_id { get; set; }  // Add this line
+        public string User_id { get; set; } 
 
         public override bool Equals(object obj)
         {

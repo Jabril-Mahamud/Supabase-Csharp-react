@@ -7,6 +7,7 @@ interface Playlist {
     id: number;
     content: string;
     sauce: string;
+    completed: string;
     app: string;
     date: string;
     time: string;

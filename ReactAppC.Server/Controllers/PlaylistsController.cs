@@ -32,6 +32,7 @@ namespace ReactAppC.Server.Controllers
                     p.Id,
                     p.Content,
                     p.Sauce,
+                    p.Completed,
                     p.App,
                     Date = p.Date.ToString("yyyy-MM-dd"),
                     Time = p.Time.ToString(@"hh\:mm\:ss")
@@ -62,6 +63,7 @@ namespace ReactAppC.Server.Controllers
                     playlist.Id,
                     playlist.Content,
                     playlist.Sauce,
+                    playlist.Completed,
                     playlist.App,
                     Date = playlist.Date.ToString("yyyy-MM-dd"),
                     Time = playlist.Time.ToString(@"hh\:mm\:ss")
@@ -86,6 +88,7 @@ namespace ReactAppC.Server.Controllers
                     p.Id,
                     p.Content,
                     p.Sauce,
+                    p.Completed,
                     p.App,
                     Date = p.Date.ToString("yyyy-MM-dd"),
                     Time = p.Time.ToString(@"hh\:mm\:ss")
@@ -115,6 +118,7 @@ namespace ReactAppC.Server.Controllers
                     createdPlaylist.Id,
                     createdPlaylist.Content,
                     createdPlaylist.Sauce,
+                    createdPlaylist.Completed,
                     createdPlaylist.App,
                     createdPlaylist.User_id,
                     Date = createdPlaylist.Date.ToString("yyyy-MM-dd"),
@@ -147,6 +151,7 @@ namespace ReactAppC.Server.Controllers
                 }
                 existingPlaylist.Content = updatedPlaylist.Content;
                 existingPlaylist.Sauce = updatedPlaylist.Sauce;
+                existingPlaylist.Completed = updatedPlaylist.Completed;
                 existingPlaylist.App = updatedPlaylist.App;
                 existingPlaylist.User_id = updatedPlaylist.User_id;
                 var updateResponse = await client.From<Playlist>().Update(existingPlaylist);
