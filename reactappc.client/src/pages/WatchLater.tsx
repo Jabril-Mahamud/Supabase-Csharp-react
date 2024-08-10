@@ -102,35 +102,35 @@ const WatchLater: React.FC = () => {
                 {viewOption === 'playlist' ? 'Playlists' : 'Video Feed'}
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                <Stack spacing={2} sx={{ marginRight: 2 }}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
-                    >
-                        {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
-                    </Button>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: 2,
+                padding: 2,
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                backgroundColor: '#f5f5f5',
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                gap: 2,
+                height: 56
+            }}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
+                    sx={{ flex: 1, height: '100%', fontSize: '0.875rem' }}
+                >
+                    {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
+                </Button>
 
-                    {viewOption === 'playlist' && isLoggedIn && (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<AddIcon />}
-                            onClick={handleCreate}
-                        >
-                            Create Playlist
-                        </Button>
-                    )}
-                </Stack>
-
-                {viewOption === 'playlist' && isLoggedIn && (
-                    <FormControl sx={{ minWidth: 120, marginLeft: 'auto' }}>
+                {isLoggedIn && viewOption === 'playlist' && (
+                    <FormControl sx={{ flex: 1, marginRight: 2 }}>
                         <InputLabel id="sort-select-label">Sort by</InputLabel>
                         <Select
                             labelId="sort-select-label"
                             value={sortOption}
                             label="Sort by"
                             onChange={(e) => setSortOption(e.target.value)}
+                            sx={{ height: '100%', fontSize: '0.875rem' }}
                         >
                             <MenuItem value="dateDesc">Newest First</MenuItem>
                             <MenuItem value="dateAsc">Oldest First</MenuItem>
@@ -138,6 +138,18 @@ const WatchLater: React.FC = () => {
                             <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
                         </Select>
                     </FormControl>
+                )}
+
+                {isLoggedIn && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                        onClick={handleCreate}
+                        sx={{ flex: 1, height: '100%', fontSize: '0.875rem' }}
+                    >
+                        Create Playlist
+                    </Button>
                 )}
             </Box>
 
@@ -181,3 +193,4 @@ const WatchLater: React.FC = () => {
 };
 
 export default WatchLater;
+

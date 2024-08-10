@@ -19,7 +19,6 @@ interface PlaylistCardProps {
 }
 
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectRatio = 4 / 3 }) => {
-    const cardHeight = '25%'; // Adjust this value as needed
     const paddingTop = `${(1 / aspectRatio) * 100}%`;
 
     return (
@@ -27,7 +26,6 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectR
             boxShadow: 1,
             width: '100%',
             height: '60%',
-            maxHeight: cardHeight, // Set the max height for the card
             paddingTop: paddingTop,
             position: 'relative',
             overflow: 'hidden', // Prevent content overflow
