@@ -12,6 +12,7 @@ interface Playlist {
     id: number;
     content: string;
     sauce: string;
+    completed: string;  // Keeping as string
     app: string;
     date: string;
     time: string;
@@ -96,6 +97,11 @@ const WatchLater: React.FC = () => {
         setSnackbarOpen(true);
     };
 
+    // Filter playlists where `completed` is "false" only for playlist view
+    const filteredPlaylists = viewOption === 'playlist'
+        ? playlists.filter(playlist => playlist.completed.toLowerCase() === 'false')
+        : playlists;
+
     return (
         <Box sx={{ maxWidth: 1200, margin: 'auto', padding: 2 }}>
             <Typography variant="h4" component="h1" gutterBottom>
@@ -156,7 +162,7 @@ const WatchLater: React.FC = () => {
             {viewOption === 'playlist' ? (
                 isLoggedIn ? (
                     <Stack spacing={2}>
-                        {playlists.map((playlist) => (
+                        {filteredPlaylists.map((playlist) => (
                             <PlaylistCard
                                 key={playlist.id}
                                 playlist={playlist}
@@ -166,11 +172,11 @@ const WatchLater: React.FC = () => {
                         ))}
                     </Stack>
                 ) : (
-                    <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
+                    <PlaylistTable playlists={filteredPlaylists} handleDelete={handleDelete} />
                 )
             ) : (
                 <Box>
-                    <PlaylistTable playlists={playlists} handleDelete={handleDelete} />
+                    <PlaylistTable playlists={filteredPlaylists} handleDelete={handleDelete} />
                 </Box>
             )}
 
@@ -193,4 +199,3 @@ const WatchLater: React.FC = () => {
 };
 
 export default WatchLater;
-

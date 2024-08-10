@@ -1,4 +1,3 @@
-// src/components/PlaylistTable.tsx
 import React from 'react';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
@@ -8,6 +7,7 @@ interface Playlist {
     id: number;
     content: string;
     sauce: string;
+    completed: string;
     app: string;
     date: string;
     time: string;
@@ -21,8 +21,9 @@ interface PlaylistTableProps {
 const PlaylistTable: React.FC<PlaylistTableProps> = ({ playlists, handleDelete }) => {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'content', headerName: 'Content', width: 150 },
+        { field: 'content', headerName: 'Content', width: 200 },
         { field: 'sauce', headerName: 'Sauce', flex: 1 },
+        { field: 'completed', headerName: 'Complete', width: 120 },
         { field: 'app', headerName: 'App', width: 150 },
         { field: 'date', headerName: 'Date', width: 150 },
         { field: 'time', headerName: 'Time', width: 150 },
@@ -42,8 +43,9 @@ const PlaylistTable: React.FC<PlaylistTableProps> = ({ playlists, handleDelete }
         id: playlist.id,
         content: playlist.content,
         sauce: playlist.sauce,
+        completed: playlist.completed,
         app: playlist.app,
-        date: new Date(playlist.date).toLocaleDateString(),
+        date: new Date(playlist.date).toLocaleDateString('en-US'),
         time: new Date(`1970-01-01T${playlist.time}`).toLocaleTimeString('en-US', { hour12: false }),
     }));
 
