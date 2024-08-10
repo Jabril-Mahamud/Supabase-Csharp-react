@@ -104,54 +104,52 @@ const WatchLater: React.FC = () => {
 
             <Box sx={{
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: 2,
                 padding: 2,
                 border: '1px solid #ccc',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                backgroundColor: '#f5f5f5',
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                gap: 2,
+                height: 56
             }}>
                 <Button
                     variant="outlined"
                     onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
-                    sx={{ flexGrow: 1, marginRight: 1, height: '56px' }}
+                    sx={{ flex: 1, height: '100%', fontSize: '0.875rem' }}
                 >
                     {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
                 </Button>
 
-                {viewOption === 'playlist' && isLoggedIn ? (
-                    <>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<AddIcon />}
-                            onClick={handleCreate}
-                            sx={{ flexGrow: 1, marginRight: 1, height: '56px' }}
+                {isLoggedIn && viewOption === 'playlist' && (
+                    <FormControl sx={{ flex: 1, marginRight: 2 }}>
+                        <InputLabel id="sort-select-label">Sort by</InputLabel>
+                        <Select
+                            labelId="sort-select-label"
+                            value={sortOption}
+                            label="Sort by"
+                            onChange={(e) => setSortOption(e.target.value)}
+                            sx={{ height: '100%', fontSize: '0.875rem' }}
                         >
-                            Create Playlist
-                        </Button>
+                            <MenuItem value="dateDesc">Newest First</MenuItem>
+                            <MenuItem value="dateAsc">Oldest First</MenuItem>
+                            <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
+                            <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
+                        </Select>
+                    </FormControl>
+                )}
 
-                        <FormControl sx={{ flexGrow: 1 }}>
-                            <InputLabel id="sort-select-label">Sort by</InputLabel>
-                            <Select
-                                labelId="sort-select-label"
-                                value={sortOption}
-                                label="Sort by"
-                                onChange={(e) => setSortOption(e.target.value)}
-                                sx={{ height: '56px' }}
-                            >
-                                <MenuItem value="dateDesc">Newest First</MenuItem>
-                                <MenuItem value="dateAsc">Oldest First</MenuItem>
-                                <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
-                                <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </>
-                ) : (
-                    <>
-                        <Box sx={{ flexGrow: 1, marginRight: 1 }} />
-                        <Box sx={{ flexGrow: 1 }} />
-                    </>
+                {isLoggedIn && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                        onClick={handleCreate}
+                        sx={{ flex: 1, height: '100%', fontSize: '0.875rem' }}
+                    >
+                        Create Playlist
+                    </Button>
                 )}
             </Box>
 
@@ -195,3 +193,4 @@ const WatchLater: React.FC = () => {
 };
 
 export default WatchLater;
+
