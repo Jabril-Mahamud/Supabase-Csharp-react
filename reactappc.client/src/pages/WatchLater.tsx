@@ -102,42 +102,56 @@ const WatchLater: React.FC = () => {
                 {viewOption === 'playlist' ? 'Playlists' : 'Video Feed'}
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                <Stack spacing={2} sx={{ marginRight: 2 }}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
-                    >
-                        {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
-                    </Button>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 2,
+                padding: 2,
+                border: '1px solid #ccc',
+                borderRadius: '4px'
+            }}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setViewOption(viewOption === 'playlist' ? 'views' : 'playlist')}
+                    sx={{ flexGrow: 1, marginRight: 1, height: '56px' }}
+                >
+                    {viewOption === 'playlist' ? 'Switch to Views' : 'Switch to Playlists'}
+                </Button>
 
-                    {viewOption === 'playlist' && isLoggedIn && (
+                {viewOption === 'playlist' && isLoggedIn ? (
+                    <>
                         <Button
                             variant="contained"
                             color="primary"
                             startIcon={<AddIcon />}
                             onClick={handleCreate}
+                            sx={{ flexGrow: 1, marginRight: 1, height: '56px' }}
                         >
                             Create Playlist
                         </Button>
-                    )}
-                </Stack>
 
-                {viewOption === 'playlist' && isLoggedIn && (
-                    <FormControl sx={{ minWidth: 120, marginLeft: 'auto' }}>
-                        <InputLabel id="sort-select-label">Sort by</InputLabel>
-                        <Select
-                            labelId="sort-select-label"
-                            value={sortOption}
-                            label="Sort by"
-                            onChange={(e) => setSortOption(e.target.value)}
-                        >
-                            <MenuItem value="dateDesc">Newest First</MenuItem>
-                            <MenuItem value="dateAsc">Oldest First</MenuItem>
-                            <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
-                            <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
-                        </Select>
-                    </FormControl>
+                        <FormControl sx={{ flexGrow: 1 }}>
+                            <InputLabel id="sort-select-label">Sort by</InputLabel>
+                            <Select
+                                labelId="sort-select-label"
+                                value={sortOption}
+                                label="Sort by"
+                                onChange={(e) => setSortOption(e.target.value)}
+                                sx={{ height: '56px' }}
+                            >
+                                <MenuItem value="dateDesc">Newest First</MenuItem>
+                                <MenuItem value="dateAsc">Oldest First</MenuItem>
+                                <MenuItem value="contentAsc">Content (A-Z)</MenuItem>
+                                <MenuItem value="contentDesc">Content (Z-A)</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </>
+                ) : (
+                    <>
+                        <Box sx={{ flexGrow: 1, marginRight: 1 }} />
+                        <Box sx={{ flexGrow: 1 }} />
+                    </>
                 )}
             </Box>
 
