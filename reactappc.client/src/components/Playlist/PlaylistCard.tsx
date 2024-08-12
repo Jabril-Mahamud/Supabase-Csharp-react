@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, IconButton, Typography, Box, Avatar, Tooltip } from '@mui/material';
-import { Delete as DeleteIcon, MoreVert as MoreVertIcon, Check as CheckIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, MoreVert as MoreVertIcon, Check as CheckIcon } from '@mui/icons-material'; // Import DeleteIcon
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 
@@ -8,7 +8,7 @@ interface Playlist {
     id: number;
     content: string;
     sauce: string;
-    completed: string;  // Change to string
+    completed: string;
     app: string;
     date: string;
     time: string;
@@ -27,9 +27,19 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, onCompl
     const handleComplete = async () => {
         try {
             await axios.patch(`/api/playlist/${playlist.id}/complete`);
-            onComplete(playlist.id); // Trigger a refresh or update in the parent component
+            onComplete(playlist.id);
         } catch (error) {
             console.error('Error marking playlist as complete:', error);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`/api/playlist/${playlist.id}`);
+            onDelete(playlist.id);
+            // Optionally refresh the page or update the state here
+        } catch (error) {
+            console.error('Error deleting playlist:', error);
         }
     };
 
@@ -40,7 +50,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, onCompl
             height: '60%',
             paddingTop: paddingTop,
             position: 'relative',
-            overflow: 'hidden', // Prevent content overflow
+            overflow: 'hidden',
         }}>
             <Box sx={{
                 position: 'absolute',
@@ -94,9 +104,11 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, onCompl
                                     </IconButton>
                                 </Tooltip>
                             )}
-                            <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
-                                <DeleteIcon />
-                            </IconButton>
+                            <Tooltip title="Delete">
+                                <IconButton size="small" onClick={handleDelete} color="error">
+                                    <DeleteIcon /> {/* Use DeleteIcon for deletion */}
+                                </IconButton>
+                            </Tooltip>
                         </Box>
                     </Box>
                 </CardContent>
