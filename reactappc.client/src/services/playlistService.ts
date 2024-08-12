@@ -8,6 +8,20 @@ export const fetchUserId = async (token: string) => {
     return response.json();
 };
 
+export const updatePlaylist = async (id: number, completed: boolean) => {
+    const response = await fetch(`/api/playlist/${id}/complete`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Failed to mark playlist as complete');
+    }
+};
+
+
 
 export const fetchAllPlaylists = async () => {
     const response = await fetch('https://localhost:7294/api/Playlist');
