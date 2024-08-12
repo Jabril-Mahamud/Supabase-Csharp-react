@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemText, Avatar, Menu, MenuItem } from '@mui/material';
+import React, { useContext, MouseEvent } from 'react';
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    Box,
+    IconButton,
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    Avatar,
+    Menu,
+    MenuItem,
+    Tooltip
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun Icon
+import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon Icon
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Auth/AuthContext';
+import { ThemeContext } from '../Theme/createTheme'; // Import ThemeContext
 
 const Navbar: React.FC = () => {
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const { isLoggedIn, logout } = useAuth();
     const navigate = useNavigate();
+    const { darkMode, toggleTheme } = useContext(ThemeContext); // Use ThemeContext
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
@@ -22,7 +41,7 @@ const Navbar: React.FC = () => {
         setDrawerOpen(open);
     };
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    const handleMenuOpen = (event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -36,15 +55,15 @@ const Navbar: React.FC = () => {
         navigate('/');
     };
 
+    const handleThemeToggle = () => {
+        toggleTheme();
+    };
+
     const menuItems = [
         { label: 'Home', to: '/' },
         { label: 'About', to: '/about' },
+        ...(isLoggedIn ? [{ label: 'Watch Later', to: '/watchlater' }] : []),
     ];
-
-    // Add Playlist to menuItems only if user is logged in
-    if (isLoggedIn) {
-        menuItems.push({label: 'watch later', to: '/watchlater' });
-    }
 
     const drawerList = () => (
         <Box
@@ -99,19 +118,33 @@ const Navbar: React.FC = () => {
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
                         >
-                            {!(isLoggedIn )? (
+                            {!(isLoggedIn) ? (
                                 <>
-
                                     <MenuItem onClick={handleMenuClose} component={Link} to="/login">Login</MenuItem>
                                     <MenuItem onClick={handleMenuClose} component={Link} to="/register">Register</MenuItem>
                                 </>
                             ) : (
                                 <>
-
-                                        <MenuItem onClick={handleMenuClose} component={Link} to="/dashboard">Dashboard</MenuItem>
-                                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                    <MenuItem onClick={handleMenuClose} component={Link} to="/dashboard">Dashboard</MenuItem>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                 </>
                             )}
+                            <MenuItem>
+                                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <Typography
+                                        variant="body1"
+                                        sx={{ flexGrow: 1, cursor: 'pointer' }}
+                                        onClick={handleThemeToggle}
+                                    >
+                                        {darkMode ? 'Dark Theme' : 'Light Theme'}
+                                    </Typography>
+                                    <Tooltip title={darkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}>
+                                        <IconButton onClick={handleThemeToggle}>
+                                            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                                        </IconButton>
+                                    </Tooltip>
+                                </Box>
+                            </MenuItem>
                         </Menu>
                     </Box>
                 </Toolbar>

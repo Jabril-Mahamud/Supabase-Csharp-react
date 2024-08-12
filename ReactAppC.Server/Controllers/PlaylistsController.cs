@@ -183,5 +183,52 @@ namespace ReactAppC.Server.Controllers
                 return NotFound($"Playlist with id {id} not found or could not be deleted. Error: {ex.Message}");
             }
         }
+
+
+        [HttpPatch("{id}/complete")]
+        public async Task<IActionResult> MarkAsComplete(int id)
+        {
+            try
+            {
+                var client = _supabaseClientService.Client;
+
+                // Fetch the existing playlist by ID
+                var existingResponse = await client
+                    .From<Playlist>()
+                    .Filter("id", Operator.Equals, id)
+                    .Get();
+
+                var existingPlaylist = existingResponse.Models.FirstOrDefault();
+
+                if (existingPlaylist == null)
+                {
+                    // If the playlist doesn't exist, return 404 Not Found
+                    return NotFound($"Playlist with id {id} not found.");
+                }
+
+                // Set the playlist's Completed status to "true"
+                existingPlaylist.Completed = "true";
+
+                // Update the playlist in the database
+                var updateResponse = await client
+                    .From<Playlist>()
+                    .Upsert(existingPlaylist);
+
+                if (updateResponse.Models.Any())
+                {
+                    // If the update was successful, return 204 No Content
+                    return NoContent();
+                }
+
+                // If the update failed, return 400 Bad Request
+                return BadRequest("Failed to update the playlist.");
+            }
+            catch (Exception ex)
+            {
+                // Return 500 Internal Server Error in case of an exception
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

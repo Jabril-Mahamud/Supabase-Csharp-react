@@ -11,6 +11,7 @@
   <ItemGroup>
     <Folder Include="src\components\Auth\" />
     <Folder Include="src\components\Hero\" />
+    <Folder Include="src\components\Theme\" />
     <Folder Include="src\pages\types\" />
     <Folder Include="src\services\" />
   </ItemGroup>

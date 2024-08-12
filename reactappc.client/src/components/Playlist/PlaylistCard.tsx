@@ -1,13 +1,14 @@
 import React from 'react';
-import { Card, CardContent, CardMedia, IconButton, Typography, Box, Avatar } from '@mui/material';
-import { Delete as DeleteIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { Card, CardContent, CardMedia, IconButton, Typography, Box, Avatar, Tooltip } from '@mui/material';
+import { Delete as DeleteIcon, MoreVert as MoreVertIcon, Check as CheckIcon } from '@mui/icons-material';
 import ReactPlayer from 'react-player';
+import axios from 'axios';
 
 interface Playlist {
     id: number;
     content: string;
     sauce: string;
-    completed: string;
+    completed: string;  // Change to string
     app: string;
     date: string;
     time: string;
@@ -16,11 +17,21 @@ interface Playlist {
 interface PlaylistCardProps {
     playlist: Playlist;
     onDelete: (id: number) => void;
+    onComplete: (id: number) => void;
     aspectRatio?: number;
 }
 
-const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectRatio = 4 / 3 }) => {
+const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, onComplete, aspectRatio = 4 / 3 }) => {
     const paddingTop = `${(1 / aspectRatio) * 100}%`;
+
+    const handleComplete = async () => {
+        try {
+            await axios.patch(`/api/playlist/${playlist.id}/complete`);
+            onComplete(playlist.id); // Trigger a refresh or update in the parent component
+        } catch (error) {
+            console.error('Error marking playlist as complete:', error);
+        }
+    };
 
     return (
         <Card sx={{
@@ -71,9 +82,22 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onDelete, aspectR
                                 {playlist.date} at {playlist.time}
                             </Typography>
                         </Box>
-                        <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
-                            <DeleteIcon />
-                        </IconButton>
+                        <Box>
+                            {playlist.completed === 'false' && (
+                                <Tooltip title="Mark as Complete">
+                                    <IconButton
+                                        size="small"
+                                        onClick={handleComplete}
+                                        color="success"
+                                    >
+                                        <CheckIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                            <IconButton size="small" onClick={() => onDelete(playlist.id)} color="error">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
                     </Box>
                 </CardContent>
             </Box>
